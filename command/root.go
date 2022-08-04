@@ -2,11 +2,11 @@ package command
 
 import (
 	"github.com/spf13/cobra"
+	consts "github.com/svanas/ladder/constants"
 )
 
 func init() {
-	rootCommand.PersistentFlags().Bool("test", false, "use the testnet (if available)")
-	rootCommand.PersistentFlags().Bool("debug", false, "log debug info to the console")
+	rootCommand.PersistentFlags().Bool(consts.FLAG_TEST, false, "use the testnet (if available)")
 	rootCommand.CompletionOptions.HiddenDefaultCmd = true
 }
 
