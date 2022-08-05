@@ -55,7 +55,7 @@ var sellCommand = &cobra.Command{
 			return err
 		}
 
-		mult, err := flag.GetFloat64(cmd, consts.FLAG_MULT)
+		mult, err := flag.Mult(cmd)
 		if err != nil {
 			return err
 		}

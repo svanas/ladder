@@ -10,13 +10,11 @@ import (
 
 // given a number of input `steps`, this function will calculate how much of the asset we will sell
 func Simulate(start_with_size, mult float64, steps int) float64 {
-	size := start_with_size
 	// this is the very 1st step we will always make
-	result := size
+	result := start_with_size
 	// go over every other step
 	for step := 1; step < steps; step++ {
-		size = size * mult
-		result += size
+		result += start_with_size * (1 + (float64(step) * (mult - 1)))
 	}
 	return result
 }
@@ -44,7 +42,7 @@ func Orders(start_at_price, stop_at_price, start_with_size, mult, size float64, 
 			Size:  precision.Round(current_size, prec.Size),
 		})
 
-		current_size = current_size * mult
+		current_size = start_with_size * (1 + (float64(step+1) * (mult - 1)))
 		current_price += delta
 	}
 
@@ -82,7 +80,7 @@ func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, 
 			fmt.Sprintf("%[3]v %.[2]*[1]f", (current_price * current_size), prec.Price, quote),
 		})
 
-		current_size = current_size * mult
+		current_size = start_with_size * (1 + (float64(step+1) * (mult - 1)))
 		current_price += delta
 	}
 
