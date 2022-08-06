@@ -10,25 +10,25 @@ import (
 )
 
 func init() {
-	sellCommand.Flags().String(consts.FLAG_ASSET, "BTC", "name of the asset you will want to sell")
-	sellCommand.Flags().String(consts.FLAG_QUOTE, "USDT", "name of the asset you will want to receive")
+	buyCommand.Flags().String(consts.FLAG_ASSET, "BTC", "name of the asset you will want to buy")
+	buyCommand.Flags().String(consts.FLAG_QUOTE, "USDT", "name of the asset you will want to spend")
 
-	sellCommand.Flags().Float64(consts.START_AT_PRICE, 0, "price where you will want to start selling at")
-	sellCommand.Flags().Float64(consts.STOP_AT_PRICE, 0, "price where you will want to stop selling")
-	sellCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first sell order")
+	buyCommand.Flags().Float64(consts.START_AT_PRICE, 0, "price where you will want to start buying at")
+	buyCommand.Flags().Float64(consts.STOP_AT_PRICE, 0, "price where you will want to stop buying")
+	buyCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first buy order")
 
-	sellCommand.Flags().Float64(consts.FLAG_MULT, 1.02, "multiplier that defines the distance between your orders")
-	sellCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to sell (in base asset)")
+	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.02, "multiplier that defines the distance between your orders")
+	buyCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to buy (in base asset)")
 
-	sellCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
-	sellCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
+	buyCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
+	buyCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
 
-	rootCommand.AddCommand(sellCommand)
+	rootCommand.AddCommand(buyCommand)
 }
 
-var sellCommand = &cobra.Command{
-	Use:   "sell",
-	Short: "sell your crypto asset",
+var buyCommand = &cobra.Command{
+	Use:   "buy",
+	Short: "buy your crypto asset",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		asset, err := cmd.Flags().GetString(consts.FLAG_ASSET)
 		if err != nil {
@@ -50,7 +50,7 @@ var sellCommand = &cobra.Command{
 			return err
 		}
 
-		if start_at_price > stop_at_price {
+		if start_at_price < stop_at_price {
 			stop_at_price, start_at_price = start_at_price, stop_at_price
 		}
 
@@ -98,11 +98,11 @@ var sellCommand = &cobra.Command{
 		}
 
 		if !dry_run {
-			// cancel existing limit sell orders
-			if err := cex.Cancel(market, exchange.SELL); err != nil {
+			// cancel existing limit buy orders
+			if err := cex.Cancel(market, exchange.BUY); err != nil {
 				return err
 			}
-			// place new limit sell orders
+			// place new limit buy orders
 			var (
 				all bool // yes to all
 				num int  // result
@@ -113,7 +113,7 @@ var sellCommand = &cobra.Command{
 			}
 			orders := internal.Orders(start_at_price, stop_at_price, start_with_size, mult, size, steps, prec)
 			for _, order := range orders {
-				if order.Price > ticker {
+				if order.Price < ticker {
 					yes := all
 					if !yes {
 						a := order.Prompt(market)
@@ -121,7 +121,7 @@ var sellCommand = &cobra.Command{
 						all = all || a == answer.YES_TO_ALL
 					}
 					if yes {
-						if _, err := cex.Order(exchange.SELL, market, order.Size, order.Price); err != nil {
+						if _, err := cex.Order(exchange.BUY, market, order.Size, order.Price); err != nil {
 							return err
 						}
 						num++
