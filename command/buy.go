@@ -99,7 +99,7 @@ var buyCommand = &cobra.Command{
 
 		if !dry_run {
 			// cancel existing limit buy orders
-			if err := cex.Cancel(market, exchange.BUY); err != nil {
+			if err := cex.Cancel(market, consts.BUY); err != nil {
 				return err
 			}
 			// place new limit buy orders
@@ -121,7 +121,7 @@ var buyCommand = &cobra.Command{
 						all = all || a == answer.YES_TO_ALL
 					}
 					if yes {
-						if _, err := cex.Order(exchange.BUY, market, order.Size, order.Price); err != nil {
+						if _, err := cex.Order(consts.BUY, market, order.Size, order.Price); err != nil {
 							return err
 						}
 						num++

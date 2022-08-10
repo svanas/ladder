@@ -1,8 +1,11 @@
+//lint:file-ignore ST1006 receiver name should be a reflection of its identity; don't use generic names such as "this" or "self"
 package exchange
 
 import (
 	"fmt"
 	"strings"
+
+	consts "github.com/svanas/ladder/constants"
 )
 
 type info struct {
@@ -10,8 +13,8 @@ type info struct {
 	name string
 }
 
-func (info *info) equals(name string) bool {
-	return strings.EqualFold(info.code, name) || strings.EqualFold(info.name, name)
+func (self *info) equals(name string) bool {
+	return strings.EqualFold(self.code, name) || strings.EqualFold(self.name, name)
 }
 
 type Precision struct {
@@ -19,18 +22,11 @@ type Precision struct {
 	Size  int
 }
 
-type Side string
-
-const (
-	BUY  Side = "buy"
-	SELL Side = "sell"
-)
-
 type Exchange interface {
-	Cancel(market string, side Side) error
+	Cancel(market string, side consts.Side) error
 	FormatMarket(asset, quote string) string
 	Info() *info
-	Order(side Side, market string, size, price float64) (oid []byte, err error)
+	Order(side consts.Side, market string, size, price float64) (oid []byte, err error)
 	Precision(market string) (*Precision, error)
 	Ticker(market string) (float64, error)
 }
@@ -39,6 +35,7 @@ var exchanges []Exchange
 
 func init() {
 	exchanges = append(exchanges, newCoinbasePro())
+	exchanges = append(exchanges, newBitstamp())
 }
 
 func FindByName(name string) (Exchange, error) {

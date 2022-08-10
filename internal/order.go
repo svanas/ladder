@@ -1,3 +1,4 @@
+//lint:file-ignore ST1006 receiver name should be a reflection of its identity; don't use generic names such as "this" or "self"
 package internal
 
 import (
@@ -13,15 +14,15 @@ type Order struct {
 	Size  float64
 }
 
-func (order *Order) Prompt(market string) answer.Answer {
+func (self *Order) Prompt(market string) answer.Answer {
 	const TITLE = "Open this order?"
 
 	tbl := table.NewWriter()
 	tbl.AppendHeader(table.Row{TITLE, TITLE}, table.RowConfig{AutoMerge: true})
 	tbl.AppendRows([]table.Row{
 		{"Market", market},
-		{"Price", strconv.FormatFloat(order.Price, 'f', -1, 64)},
-		{"Size", strconv.FormatFloat(order.Size, 'f', -1, 64)},
+		{"Price", strconv.FormatFloat(self.Price, 'f', -1, 64)},
+		{"Size", strconv.FormatFloat(self.Size, 'f', -1, 64)},
 	})
 	fmt.Println(tbl.Render())
 

@@ -3,8 +3,10 @@ package exchange
 
 import (
 	"fmt"
+
 	coinbasepro "github.com/svanas/go-coinbasepro"
 	"github.com/svanas/ladder/api/gdax"
+	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
 )
 
@@ -12,14 +14,15 @@ type CoinbasePro struct {
 	*info
 }
 
-func (self *CoinbasePro) Cancel(market string, side Side) error {
+func (self *CoinbasePro) Cancel(market string, side consts.Side) error {
 	client, err := gdax.ReadWrite()
 	if err != nil {
 		return err
 	}
 
 	cursor := client.ListOrders(coinbasepro.ListOrdersParams{
-		Status: "open",
+		Status:    "open",
+		ProductID: market,
 	})
 
 	for cursor.HasMore {
@@ -28,7 +31,7 @@ func (self *CoinbasePro) Cancel(market string, side Side) error {
 			return err
 		}
 		for _, order := range orders {
-			if order.ProductID == market && order.Size == string(side) {
+			if side.Equals(order.Side) {
 				if err := client.CancelOrder(order.ID); err != nil {
 					return err
 				}
@@ -47,7 +50,7 @@ func (self *CoinbasePro) Info() *info {
 	return self.info
 }
 
-func (self *CoinbasePro) Order(side Side, market string, size, price float64) (oid []byte, err error) {
+func (self *CoinbasePro) Order(side consts.Side, market string, size, price float64) (oid []byte, err error) {
 	client, err := gdax.ReadWrite()
 	if err != nil {
 		return nil, err
@@ -56,7 +59,7 @@ func (self *CoinbasePro) Order(side Side, market string, size, price float64) (o
 	input := (&gdax.Order{
 		Order: &coinbasepro.Order{
 			Type:      "limit",
-			Side:      string(side),
+			Side:      side.String(),
 			ProductID: market,
 		},
 	}).SetSize(size).SetPrice(price)
