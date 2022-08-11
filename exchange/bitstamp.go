@@ -13,7 +13,7 @@ type Bitstamp struct {
 	*info
 }
 
-func (self *Bitstamp) Cancel(market string, side consts.Side) error {
+func (self *Bitstamp) Cancel(market string, side consts.OrderSide) error {
 	client, err := bitstamp.ReadWrite()
 	if err != nil {
 		return err
@@ -43,7 +43,7 @@ func (self *Bitstamp) Info() *info {
 	return self.info
 }
 
-func (self *Bitstamp) Order(side consts.Side, market string, size, price float64) (oid []byte, err error) {
+func (self *Bitstamp) Order(side consts.OrderSide, market string, size, price float64) (oid *string, err error) {
 	client, err := bitstamp.ReadWrite()
 	if err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (self *Bitstamp) Order(side consts.Side, market string, size, price float64
 		return nil, err
 	}
 
-	return []byte(order.Id), nil
+	return &order.Id, nil
 }
 
 func (self *Bitstamp) Precision(market string) (*Precision, error) {

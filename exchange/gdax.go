@@ -3,6 +3,7 @@ package exchange
 
 import (
 	"fmt"
+	"strconv"
 
 	coinbasepro "github.com/svanas/go-coinbasepro"
 	"github.com/svanas/ladder/api/gdax"
@@ -14,7 +15,7 @@ type CoinbasePro struct {
 	*info
 }
 
-func (self *CoinbasePro) Cancel(market string, side consts.Side) error {
+func (self *CoinbasePro) Cancel(market string, side consts.OrderSide) error {
 	client, err := gdax.ReadWrite()
 	if err != nil {
 		return err
@@ -50,7 +51,7 @@ func (self *CoinbasePro) Info() *info {
 	return self.info
 }
 
-func (self *CoinbasePro) Order(side consts.Side, market string, size, price float64) (oid []byte, err error) {
+func (self *CoinbasePro) Order(side consts.OrderSide, market string, size, price float64) (oid *string, err error) {
 	client, err := gdax.ReadWrite()
 	if err != nil {
 		return nil, err
@@ -59,7 +60,7 @@ func (self *CoinbasePro) Order(side consts.Side, market string, size, price floa
 	input := (&gdax.Order{
 		Order: &coinbasepro.Order{
 			Type:      "limit",
-			Side:      side.String(),
+			Side:      side.ToLowerCase(),
 			ProductID: market,
 		},
 	}).SetSize(size).SetPrice(price)
@@ -69,7 +70,7 @@ func (self *CoinbasePro) Order(side consts.Side, market string, size, price floa
 		return nil, err
 	}
 
-	return []byte(output.ID), nil
+	return &output.ID, nil
 }
 
 func (self *CoinbasePro) Precision(market string) (*Precision, error) {
@@ -88,7 +89,7 @@ func (self *CoinbasePro) Ticker(market string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return gdax.ParseFloat(ticker.Price), nil
+	return strconv.ParseFloat(ticker.Price, 64)
 }
 
 func newCoinbasePro() Exchange {

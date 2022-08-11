@@ -20,27 +20,6 @@ import (
 	"github.com/svanas/ladder/flag"
 )
 
-const (
-	endpoint = "https://www.bitstamp.net/api/v2"
-)
-
-var (
-	lastRequest       time.Time
-	requestsPerSecond float64 = 10
-)
-
-func beforeRequest(method, path string) error {
-	elapsed := time.Since(lastRequest)
-	if elapsed.Seconds() < (float64(1) / requestsPerSecond) {
-		time.Sleep(time.Duration((float64(time.Second) / requestsPerSecond) - float64(elapsed)))
-	}
-	return nil
-}
-
-func afterRequest() {
-	lastRequest = time.Now()
-}
-
 type Client struct {
 	baseURL    string
 	apiKey     string
@@ -243,13 +222,12 @@ func (self *Client) GetPair(market string) (*Pair, error) {
 	}
 }
 
-func (self *Client) TradingPairsInfo() ([]Pair, error) {
+func (self *Client) TradingPairsInfo() (out []Pair, err error) {
 	body, err := self.get("/trading-pairs-info/")
 	if err != nil {
 		return nil, err
 	}
 
-	var out []Pair
 	if err := json.Unmarshal(body, &out); err != nil {
 		return nil, err
 	}
@@ -257,13 +235,12 @@ func (self *Client) TradingPairsInfo() ([]Pair, error) {
 	return out, nil
 }
 
-func (self *Client) GetOpenOrders(pair string) ([]Order, error) {
+func (self *Client) GetOpenOrders(pair string) (out []Order, err error) {
 	body, err := self.post(fmt.Sprintf("/open_orders/%s/", pair), url.Values{})
 	if err != nil {
 		return nil, err
 	}
 
-	var out []Order
 	if err := json.Unmarshal(body, &out); err != nil {
 		return nil, err
 	}
@@ -282,19 +259,18 @@ func (self *Client) CancelOrder(id string) error {
 	return nil
 }
 
-func (self *Client) Ticker(pair string) (*Ticker, error) {
+func (self *Client) Ticker(pair string) (out *Ticker, err error) {
 	body, err := self.get(fmt.Sprintf("/ticker/%s/", pair))
 	if err != nil {
 		return nil, err
 	}
-	var out Ticker
-	if err := json.Unmarshal(body, &out); err != nil {
+	if err := json.Unmarshal(body, out); err != nil {
 		return nil, err
 	}
-	return &out, nil
+	return out, nil
 }
 
-func (self *Client) BuyLimitOrder(pair string, amount, price float64) (*Order, error) {
+func (self *Client) BuyLimitOrder(pair string, amount, price float64) (out *Order, err error) {
 	values := url.Values{}
 	values.Add("amount", strconv.FormatFloat(amount, 'f', -1, 64))
 	values.Add("price", strconv.FormatFloat(price, 'f', -1, 64))
@@ -304,15 +280,14 @@ func (self *Client) BuyLimitOrder(pair string, amount, price float64) (*Order, e
 		return nil, err
 	}
 
-	var out Order
-	if err := json.Unmarshal(body, &out); err != nil {
+	if err := json.Unmarshal(body, out); err != nil {
 		return nil, err
 	}
 
-	return &out, nil
+	return out, nil
 }
 
-func (client *Client) SellLimitOrder(pair string, amount, price float64) (*Order, error) {
+func (client *Client) SellLimitOrder(pair string, amount, price float64) (out *Order, err error) {
 	values := url.Values{}
 	values.Add("amount", strconv.FormatFloat(amount, 'f', -1, 64))
 	values.Add("price", strconv.FormatFloat(price, 'f', -1, 64))
@@ -322,12 +297,11 @@ func (client *Client) SellLimitOrder(pair string, amount, price float64) (*Order
 		return nil, err
 	}
 
-	var out Order
-	if err = json.Unmarshal(body, &out); err != nil {
+	if err := json.Unmarshal(body, out); err != nil {
 		return nil, err
 	}
 
-	return &out, nil
+	return out, nil
 }
 
 func ReadOnly() *Client {

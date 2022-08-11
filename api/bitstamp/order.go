@@ -14,7 +14,7 @@ type Order struct {
 	CurrencyPair string  `json:"currency_pair,omitempty"` // warning: NOT equal to market name
 }
 
-func (self *Order) Side() consts.Side {
+func (self *Order) Side() consts.OrderSide {
 	if self.Type == 0 {
 		return consts.BUY
 	}

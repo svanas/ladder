@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	BASE_URL         = "https://api.pro.coinbase.com"
-	BASE_URL_SANDBOX = "https://api-public.sandbox.pro.coinbase.com"
+	baseURL = "https://api.pro.coinbase.com"
+	sandbox = "https://api-public.sandbox.pro.coinbase.com"
 )
 
 type Client struct {
@@ -79,11 +79,11 @@ func ReadOnly() *Client {
 
 	if flag.Test() {
 		client.UpdateConfig(&coinbasepro.ClientConfig{
-			BaseURL: BASE_URL_SANDBOX,
+			BaseURL: baseURL,
 		})
 	} else {
 		client.UpdateConfig(&coinbasepro.ClientConfig{
-			BaseURL: BASE_URL,
+			BaseURL: sandbox,
 		})
 	}
 
