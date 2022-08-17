@@ -25,8 +25,11 @@ type Client struct {
 	apiKey     string
 	apiSecret  string
 	httpClient *http.Client
-	pairs      []Pair
 }
+
+var (
+	cache []Pair
+)
 
 func (self *Client) reason(body []byte) error {
 	resp := make(map[string]interface{})
@@ -48,12 +51,8 @@ func (self *Client) reason(body []byte) error {
 
 func (self *Client) get(path string) ([]byte, error) {
 	// satisfy the rate limiter (limited to 8000 requests per 10 minutes)
-	if err := beforeRequest("GET", path); err != nil {
-		return nil, err
-	}
-	defer func() {
-		afterRequest()
-	}()
+	beforeRequest("GET", path)
+	defer afterRequest()
 
 	// parse the bitstamp URL
 	endpoint, err := url.Parse(self.baseURL)
@@ -89,12 +88,8 @@ func (self *Client) get(path string) ([]byte, error) {
 
 func (self *Client) post(path string, values url.Values) ([]byte, error) {
 	// satisfy the rate limiter (limited to 8000 requests per 10 minutes)
-	if err := beforeRequest("POST", path); err != nil {
-		return nil, err
-	}
-	defer func() {
-		afterRequest()
-	}()
+	beforeRequest("POST", path)
+	defer afterRequest()
 
 	// parse the bitstamp URL
 	endpoint, err := url.Parse(self.baseURL)
@@ -188,19 +183,19 @@ func (self *Client) post(path string, values url.Values) ([]byte, error) {
 }
 
 func (self *Client) getPairs(cached bool) ([]Pair, error) {
-	if self.pairs == nil || !cached {
+	if cache == nil || !cached {
 		pairs, err := self.TradingPairsInfo()
 		if err != nil {
 			return nil, err
 		}
-		self.pairs = nil
+		cache = nil
 		for _, pair := range pairs {
 			if strings.EqualFold(pair.Trading, "enabled") {
-				self.pairs = append(self.pairs, pair)
+				cache = append(cache, pair)
 			}
 		}
 	}
-	return self.pairs, nil
+	return cache, nil
 }
 
 func (self *Client) GetPair(market string) (*Pair, error) {
@@ -312,7 +307,6 @@ func ReadOnly() *Client {
 		&http.Client{
 			Timeout: 30 * time.Second,
 		},
-		nil,
 	}
 }
 
@@ -334,6 +328,5 @@ func ReadWrite() (*Client, error) {
 		&http.Client{
 			Timeout: 30 * time.Second,
 		},
-		nil,
 	}, nil
 }

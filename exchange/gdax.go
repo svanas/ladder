@@ -51,10 +51,10 @@ func (self *CoinbasePro) Info() *info {
 	return self.info
 }
 
-func (self *CoinbasePro) Order(side consts.OrderSide, market string, size, price float64) (oid *string, err error) {
+func (self *CoinbasePro) Order(side consts.OrderSide, market string, size, price float64) (oid string, err error) {
 	client, err := gdax.ReadWrite()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	input := (&gdax.Order{
@@ -67,10 +67,10 @@ func (self *CoinbasePro) Order(side consts.OrderSide, market string, size, price
 
 	output, err := client.CreateOrder(input)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &output.ID, nil
+	return output.ID, nil
 }
 
 func (self *CoinbasePro) Precision(market string) (*Precision, error) {

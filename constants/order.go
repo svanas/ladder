@@ -22,6 +22,10 @@ func (self *OrderSide) ToLowerCase() string {
 	return strings.ToLower(self.String())
 }
 
+func (self *OrderSide) ToUpperCase() string {
+	return strings.ToUpper(self.String())
+}
+
 func (self *OrderSide) Equals(name string) bool {
 	return strings.EqualFold(self.String(), name)
 }

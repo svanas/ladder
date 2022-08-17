@@ -13,12 +13,11 @@ var (
 	requestsPerSecond float64 = 10
 )
 
-func beforeRequest(method, path string) error {
+func beforeRequest(method, path string) {
 	elapsed := time.Since(lastRequest)
 	if elapsed.Seconds() < (float64(1) / requestsPerSecond) {
-		time.Sleep(time.Duration((float64(time.Second) / requestsPerSecond) - float64(elapsed)))
+		time.Sleep(time.Duration((float64(time.Second) / requestsPerSecond)) - elapsed)
 	}
-	return nil
 }
 
 func afterRequest() {

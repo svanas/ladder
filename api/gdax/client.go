@@ -17,23 +17,26 @@ const (
 
 type Client struct {
 	*coinbasepro.Client
-	products []coinbasepro.Product
 }
 
+var (
+	cache []coinbasepro.Product
+)
+
 func (self *Client) getProducts(cached bool) ([]coinbasepro.Product, error) {
-	if self.products == nil || !cached {
+	if cache == nil || !cached {
 		products, err := self.Client.GetProducts()
 		if err != nil {
 			return nil, err
 		}
-		self.products = nil
+		cache = nil
 		for _, product := range products {
 			if !product.CancelOnly && !product.TradingDisabled {
-				self.products = append(self.products, product)
+				cache = append(cache, product)
 			}
 		}
 	}
-	return self.products, nil
+	return cache, nil
 }
 
 func (self *Client) GetProduct(market string) (*coinbasepro.Product, error) {

@@ -24,8 +24,11 @@ type Client struct {
 	apiSecret  string
 	appId      string
 	httpClient *http.Client
-	markets    []Market
 }
+
+var (
+	cache []Market
+)
 
 func (self *Client) Do(method string, path string, payload []byte, auth bool) ([]byte, error) {
 	var (
@@ -43,13 +46,8 @@ func (self *Client) Do(method string, path string, payload []byte, auth bool) ([
 }
 
 func (self *Client) do(method string, path string, payload []byte, auth bool) (int, []byte, error) {
-	cooled, err := beforeRequest(path)
-	if err != nil {
-		return 0, nil, err
-	}
-	defer func() {
-		afterRequest()
-	}()
+	cooled := beforeRequest(path)
+	defer afterRequest()
 
 	url := func() string {
 		if strings.HasPrefix(path, "http") {
@@ -121,7 +119,7 @@ func (self *Client) do(method string, path string, payload []byte, auth bool) (i
 }
 
 func (self *Client) getMarkets(cached bool) ([]Market, error) {
-	if self.markets == nil || !cached {
+	if cache == nil || !cached {
 		markets, err := func() (markets []Market, err error) {
 			data, err := self.Do("GET", "markets", nil, false)
 			if err != nil {
@@ -135,14 +133,14 @@ func (self *Client) getMarkets(cached bool) ([]Market, error) {
 		if err != nil {
 			return nil, err
 		}
-		self.markets = nil
+		cache = nil
 		for _, market := range markets {
 			if market.Active() {
-				self.markets = append(self.markets, market)
+				cache = append(cache, market)
 			}
 		}
 	}
-	return self.markets, nil
+	return cache, nil
 }
 
 func (self *Client) GetMarket(name string) (*Market, error) {
@@ -245,7 +243,6 @@ func ReadOnly() *Client {
 		&http.Client{
 			Timeout: 30 * time.Second,
 		},
-		nil,
 	}
 }
 
@@ -267,6 +264,5 @@ func ReadWrite() (*Client, error) {
 		&http.Client{
 			Timeout: 30 * time.Second,
 		},
-		nil,
 	}, nil
 }

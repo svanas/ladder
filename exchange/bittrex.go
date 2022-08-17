@@ -43,18 +43,18 @@ func (self *Bittrex) Info() *info {
 	return self.info
 }
 
-func (self *Bittrex) Order(side consts.OrderSide, market string, size, price float64) (oid *string, err error) {
+func (self *Bittrex) Order(side consts.OrderSide, market string, size, price float64) (oid string, err error) {
 	client, err := bittrex.ReadWrite()
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
 	order, err := client.CreateOrder(market, side, consts.LIMIT, size, price, consts.GTC)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return &order.Id, nil
+	return order.Id, nil
 }
 
 func (self *Bittrex) Precision(symbol string) (*Precision, error) {
