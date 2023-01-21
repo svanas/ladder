@@ -50,7 +50,7 @@ Usage: `./ladder sell [flags]`
 | --quote           | name of the asset you will want to receive                             | USDT    |
 | --start-at-price  | price where you will want to start selling at                          |         |
 | --stop-at-price   | price where you will want to stop selling                              |         |
-| --start-with-size | size of your first sell order                                          |         |
+| --start-with-size | size of your first sell order (in base asset)                          |         |
 | --mult            | multiplier that defines the distance between your orders               | 1.02    |
 | --size            | the quantity you will want to sell (in base asset)                     |         |
 
@@ -65,6 +65,6 @@ Usage: `./ladder buy [flags]`
 | --quote           | name of the asset you will want to spend                               | USDT    |
 | --start-at-price  | price where you will want to start buying at                           |         |
 | --stop-at-price   | price where you will want to stop buying                               |         |
-| --start-with-size | size of your first buy order                                           |         |
+| --start-with-size | size of your first buy order (in quote asset)                          |         |
 | --mult            | multiplier that defines the distance between your orders               | 1.02    |
-| --size            | the quantity you will want to buy (in base asset)                      |         |
+| --size            | the quantity you will want to buy (in quote asset)                     |         |
