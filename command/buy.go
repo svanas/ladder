@@ -15,10 +15,10 @@ func init() {
 
 	buyCommand.Flags().Float64(consts.START_AT_PRICE, 0, "price where you will want to start buying at")
 	buyCommand.Flags().Float64(consts.STOP_AT_PRICE, 0, "price where you will want to stop buying")
-	buyCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first buy order")
+	buyCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first buy order (in quote asset)")
 
 	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.02, "multiplier that defines the distance between your orders")
-	buyCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to buy (in base asset)")
+	buyCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to buy (in quote asset)")
 
 	buyCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
 	buyCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
@@ -70,9 +70,10 @@ var buyCommand = &cobra.Command{
 		}
 
 		steps := 2
-		for internal.Simulate(start_with_size, mult, steps) < size {
+		for internal.SimulateBuy(start_at_price, stop_at_price, start_with_size, mult, steps) < size {
 			steps++
 		}
+		steps--
 
 		cex, err := func() (exchange.Exchange, error) {
 			cex, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
@@ -111,7 +112,7 @@ var buyCommand = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			orders := internal.Orders(start_at_price, stop_at_price, start_with_size, mult, size, steps, prec)
+			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, steps, prec)
 			for _, order := range orders {
 				if order.Price < ticker {
 					yes := all
@@ -130,7 +131,7 @@ var buyCommand = &cobra.Command{
 			}
 		}
 
-		internal.Print(asset, quote, start_at_price, stop_at_price, start_with_size, mult, size, steps, prec)
+		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, steps, prec)
 
 		return nil
 	},

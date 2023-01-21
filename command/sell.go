@@ -15,7 +15,7 @@ func init() {
 
 	sellCommand.Flags().Float64(consts.START_AT_PRICE, 0, "price where you will want to start selling at")
 	sellCommand.Flags().Float64(consts.STOP_AT_PRICE, 0, "price where you will want to stop selling")
-	sellCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first sell order")
+	sellCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first sell order (in base asset)")
 
 	sellCommand.Flags().Float64(consts.FLAG_MULT, 1.02, "multiplier that defines the distance between your orders")
 	sellCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to sell (in base asset)")
@@ -70,9 +70,10 @@ var sellCommand = &cobra.Command{
 		}
 
 		steps := 2
-		for internal.Simulate(start_with_size, mult, steps) < size {
+		for internal.SimulateSell(start_with_size, mult, steps) < size {
 			steps++
 		}
+		steps--
 
 		cex, err := func() (exchange.Exchange, error) {
 			cex, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
@@ -111,7 +112,7 @@ var sellCommand = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			orders := internal.Orders(start_at_price, stop_at_price, start_with_size, mult, size, steps, prec)
+			orders := internal.Orders(start_at_price, stop_at_price, start_with_size, mult, steps, prec)
 			for _, order := range orders {
 				if order.Price > ticker {
 					yes := all
@@ -130,7 +131,7 @@ var sellCommand = &cobra.Command{
 			}
 		}
 
-		internal.Print(asset, quote, start_at_price, stop_at_price, start_with_size, mult, size, steps, prec)
+		internal.Print(asset, quote, start_at_price, stop_at_price, start_with_size, mult, steps, prec)
 
 		return nil
 	},

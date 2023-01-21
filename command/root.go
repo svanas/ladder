@@ -6,6 +6,9 @@ import (
 )
 
 func init() {
+	rootCommand.PersistentFlags().String(consts.FLAG_API_KEY, "", "your API key")
+	rootCommand.PersistentFlags().String(consts.FLAG_API_SECRET, "", "your API secret")
+	rootCommand.PersistentFlags().String(consts.FLAG_API_PASSPHRASE, "", "your API passphrase (optional)")
 	rootCommand.PersistentFlags().Bool(consts.FLAG_TEST, false, "use the testnet (if available)")
 	rootCommand.CompletionOptions.HiddenDefaultCmd = true
 }
