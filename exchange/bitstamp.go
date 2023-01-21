@@ -3,6 +3,7 @@ package exchange
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/svanas/ladder/api/bitstamp"
@@ -80,7 +81,7 @@ func (self *Bitstamp) Ticker(market string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	return ticker.Last, nil
+	return strconv.ParseFloat(ticker.Last, 64)
 }
 
 func newBitstamp() Exchange {
