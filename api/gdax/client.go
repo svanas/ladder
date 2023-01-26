@@ -67,7 +67,7 @@ func (self *Client) CreateOrder(order *Order) (*Order, error) {
 	if unwrapped, err = self.Client.CreateOrder(order.Order); err != nil {
 		return nil, err
 	}
-	if wrapped, err = wrap(&unwrapped); err != nil {
+	if wrapped, err = Wrap(&unwrapped); err != nil {
 		return nil, err
 	}
 	return wrapped, nil

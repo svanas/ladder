@@ -43,7 +43,7 @@ func (self *Binance) Info() *info {
 	return self.info
 }
 
-func (self *Binance) Order(side consts.OrderSide, market string, size, price float64) (oid string, err error) {
+func (self *Binance) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
 	client, err := binance.ReadWrite()
 	if err != nil {
 		return "", err
@@ -55,6 +55,38 @@ func (self *Binance) Order(side consts.OrderSide, market string, size, price flo
 	}
 
 	return strconv.FormatInt(order.OrderID, 10), nil
+}
+
+func (self *Binance) Orders(market string, side consts.OrderSide) ([]Order, error) {
+	client, err := binance.ReadWrite()
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err := client.GetOpenOrders(market)
+	if err != nil {
+		return nil, err
+	}
+
+	parse := func(input string) float64 {
+		out, err := strconv.ParseFloat(input, 64)
+		if err == nil {
+			return out
+		}
+		return 0
+	}
+
+	var output []Order
+	for _, order := range orders {
+		if side.Equals(string(order.Side)) {
+			output = append(output, Order{
+				Size:  parse(order.OrigQuantity),
+				Price: parse(order.Price),
+			})
+		}
+	}
+
+	return output, nil
 }
 
 func (self *Binance) Precision(symbol string) (*Precision, error) {

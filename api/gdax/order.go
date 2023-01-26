@@ -37,7 +37,7 @@ func (self *Order) SetPrice(value float64) *Order {
 	return self
 }
 
-func wrap(input *coinbasepro.Order) (*Order, error) {
+func Wrap(input *coinbasepro.Order) (*Order, error) {
 	var (
 		err error
 		buf []byte

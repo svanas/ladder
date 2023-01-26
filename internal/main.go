@@ -79,8 +79,8 @@ func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, 
 		cumulative_value += current_price * current_size
 
 		tbl.AppendRow(table.Row{step + 1,
-			fmt.Sprintf("%[3]v %.[2]*[1]f", current_price, prec.Price, asset),
-			fmt.Sprintf("%.[2]*[1]f", current_size, prec.Size),
+			fmt.Sprintf("%[3]v %.[2]*[1]f", current_price, prec.Price, quote),
+			fmt.Sprintf("%.[2]*[1]f %[3]v", current_size, prec.Size, asset),
 			fmt.Sprintf("%[3]v %.[2]*[1]f", (current_price * current_size), prec.Price, quote),
 		})
 
@@ -90,7 +90,7 @@ func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, 
 
 	tbl.AppendSeparator()
 	tbl.AppendRow(table.Row{"TOTAL", "",
-		fmt.Sprintf("%.[2]*[1]f", cumulative_size, prec.Size),
+		fmt.Sprintf("%.[2]*[1]f %[3]v", cumulative_size, prec.Size, asset),
 		fmt.Sprintf("%[3]v %.[2]*[1]f", cumulative_value, prec.Price, quote),
 	})
 

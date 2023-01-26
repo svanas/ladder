@@ -10,6 +10,7 @@ import (
 type OrderSide string
 
 const (
+	NONE OrderSide = ""
 	BUY  OrderSide = "BUY"
 	SELL OrderSide = "SELL"
 )

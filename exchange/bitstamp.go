@@ -44,7 +44,7 @@ func (self *Bitstamp) Info() *info {
 	return self.info
 }
 
-func (self *Bitstamp) Order(side consts.OrderSide, market string, size, price float64) (oid string, err error) {
+func (self *Bitstamp) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
 	client, err := bitstamp.ReadWrite()
 	if err != nil {
 		return "", err
@@ -63,6 +63,30 @@ func (self *Bitstamp) Order(side consts.OrderSide, market string, size, price fl
 	}
 
 	return order.Id, nil
+}
+
+func (self *Bitstamp) Orders(market string, side consts.OrderSide) ([]Order, error) {
+	client, err := bitstamp.ReadWrite()
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err := client.GetOpenOrders(market)
+	if err != nil {
+		return nil, err
+	}
+
+	var output []Order
+	for _, order := range orders {
+		if order.Side() == side {
+			output = append(output, Order{
+				Size:  order.Amount,
+				Price: order.Price,
+			})
+		}
+	}
+
+	return output, nil
 }
 
 func (self *Bitstamp) Precision(market string) (*Precision, error) {

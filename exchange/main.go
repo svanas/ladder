@@ -17,6 +17,11 @@ func (self *info) equals(name string) bool {
 	return strings.EqualFold(self.code, name) || strings.EqualFold(self.name, name)
 }
 
+type Order struct {
+	Size  float64
+	Price float64
+}
+
 type Precision struct {
 	Price int
 	Size  int
@@ -26,7 +31,8 @@ type Exchange interface {
 	Cancel(market string, side consts.OrderSide) error
 	FormatMarket(asset, quote string) string
 	Info() *info
-	Order(side consts.OrderSide, market string, size, price float64) (oid string, err error)
+	Order(market string, side consts.OrderSide, size, price float64) (oid string, err error)
+	Orders(market string, side consts.OrderSide) ([]Order, error)
 	Precision(market string) (*Precision, error)
 	Ticker(market string) (float64, error)
 }
@@ -34,7 +40,7 @@ type Exchange interface {
 var exchanges []Exchange
 
 func init() {
-	exchanges = append(exchanges, newCoinbasePro())
+	exchanges = append(exchanges, newCoinbase())
 	exchanges = append(exchanges, newBitstamp())
 	exchanges = append(exchanges, newBittrex())
 	exchanges = append(exchanges, newBinance())

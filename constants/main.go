@@ -14,4 +14,5 @@ const (
 	FLAG_SIZE           = "size"
 	FLAG_EXCHANGE       = "exchange"
 	FLAG_DRY_RUN        = "dry-run"
+	FLAG_SIDE           = "side"
 )

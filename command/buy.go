@@ -122,7 +122,7 @@ var buyCommand = &cobra.Command{
 						all = all || a == answer.YES_TO_ALL
 					}
 					if yes {
-						if _, err := cex.Order(consts.BUY, market, order.Size, order.Price); err != nil {
+						if _, err := cex.Order(market, consts.BUY, order.Size, order.Price); err != nil {
 							return err
 						}
 						num++

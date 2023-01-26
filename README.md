@@ -24,7 +24,7 @@ In essence, you are executing a better dollar-cost-averaging (DCA) trading strat
 ## exchanges
 
 At the time of this writing, the software supports the following exchanges:
-* [Coinbase Pro](https://pro.coinbase.com)
+* [Coinbase](https://pro.coinbase.com)
 * [Bitstamp](https://www.bitstamp.net/ref/QWE1MDzZoyPWZNyU)
 * [Bittrex](https://bittrex.com/discover/join?referralCode=CIC-YDN-5DX)
 * [Binance](https://accounts.binance.com/en/register?ref=17133979)
@@ -68,3 +68,14 @@ Usage: `./ladder buy [flags]`
 | --start-with-size | size of your first buy order (in quote asset)                          |         |
 | --mult            | multiplier that defines the distance between your orders               | 1.02    |
 | --size            | the quantity you will want to buy (in quote asset)                     |         |
+
+## cancel
+
+Usage: `./ladder cancel [flags]`
+
+| flag              | description                                                            | default |
+|-------------------|------------------------------------------------------------------------|---------|
+| --exchange        | name or code of the exchange                                           |         |
+| --asset           | base asset                                                             | BTC     |
+| --quote           | quote asset                                                            | USDT    |
+| --side            | `buy` or `sell`                                                        |         |

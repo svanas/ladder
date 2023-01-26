@@ -5,29 +5,29 @@ import (
 	"fmt"
 	"strconv"
 
-	coinbasepro "github.com/svanas/go-coinbasepro"
+	coinbase "github.com/svanas/go-coinbasepro"
 	"github.com/svanas/ladder/api/gdax"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
 )
 
-type CoinbasePro struct {
+type Coinbase struct {
 	*info
 }
 
-func (self *CoinbasePro) Cancel(market string, side consts.OrderSide) error {
+func (self *Coinbase) Cancel(market string, side consts.OrderSide) error {
 	client, err := gdax.ReadWrite()
 	if err != nil {
 		return err
 	}
 
-	cursor := client.ListOrders(coinbasepro.ListOrdersParams{
+	cursor := client.ListOrders(coinbase.ListOrdersParams{
 		Status:    "open",
 		ProductID: market,
 	})
 
 	for cursor.HasMore {
-		var orders []coinbasepro.Order
+		var orders []coinbase.Order
 		if err := cursor.NextPage(&orders); err != nil {
 			return err
 		}
@@ -43,22 +43,22 @@ func (self *CoinbasePro) Cancel(market string, side consts.OrderSide) error {
 	return nil
 }
 
-func (self *CoinbasePro) FormatMarket(asset, quote string) string {
+func (self *Coinbase) FormatMarket(asset, quote string) string {
 	return fmt.Sprintf("%s-%s", asset, quote)
 }
 
-func (self *CoinbasePro) Info() *info {
+func (self *Coinbase) Info() *info {
 	return self.info
 }
 
-func (self *CoinbasePro) Order(side consts.OrderSide, market string, size, price float64) (oid string, err error) {
+func (self *Coinbase) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
 	client, err := gdax.ReadWrite()
 	if err != nil {
 		return "", err
 	}
 
 	input := (&gdax.Order{
-		Order: &coinbasepro.Order{
+		Order: &coinbase.Order{
 			Type:      "limit",
 			Side:      side.ToLowerCase(),
 			ProductID: market,
@@ -73,7 +73,41 @@ func (self *CoinbasePro) Order(side consts.OrderSide, market string, size, price
 	return output.ID, nil
 }
 
-func (self *CoinbasePro) Precision(market string) (*Precision, error) {
+func (self *Coinbase) Orders(market string, side consts.OrderSide) ([]Order, error) {
+	client, err := gdax.ReadWrite()
+	if err != nil {
+		return nil, err
+	}
+
+	cursor := client.ListOrders(coinbase.ListOrdersParams{
+		Status:    "open",
+		ProductID: market,
+	})
+
+	var output []Order
+	for cursor.HasMore {
+		var orders []coinbase.Order
+		if err := cursor.NextPage(&orders); err != nil {
+			return nil, err
+		}
+		for _, order := range orders {
+			if side.Equals(order.Side) {
+				wrapped, err := gdax.Wrap(&order)
+				if err != nil {
+					return nil, err
+				}
+				output = append(output, Order{
+					Size:  wrapped.GetSize(),
+					Price: wrapped.GetPrice(),
+				})
+			}
+		}
+	}
+
+	return output, nil
+}
+
+func (self *Coinbase) Precision(market string) (*Precision, error) {
 	product, err := gdax.ReadOnly().GetProduct(market)
 	if err != nil {
 		return nil, err
@@ -84,7 +118,7 @@ func (self *CoinbasePro) Precision(market string) (*Precision, error) {
 	}, nil
 }
 
-func (self *CoinbasePro) Ticker(market string) (float64, error) {
+func (self *Coinbase) Ticker(market string) (float64, error) {
 	ticker, err := gdax.ReadOnly().GetTicker(market)
 	if err != nil {
 		return 0, err
@@ -92,11 +126,11 @@ func (self *CoinbasePro) Ticker(market string) (float64, error) {
 	return strconv.ParseFloat(ticker.Price, 64)
 }
 
-func newCoinbasePro() Exchange {
-	return &CoinbasePro{
+func newCoinbase() Exchange {
+	return &Coinbase{
 		info: &info{
 			code: "GDAX",
-			name: "Coinbase Pro",
+			name: "Coinbase",
 		},
 	}
 }
