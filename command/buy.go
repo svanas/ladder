@@ -10,14 +10,14 @@ import (
 )
 
 func init() {
-	buyCommand.Flags().String(consts.FLAG_ASSET, "BTC", "name of the asset you will want to buy")
-	buyCommand.Flags().String(consts.FLAG_QUOTE, "USDT", "name of the asset you will want to spend")
+	buyCommand.Flags().String(consts.FLAG_ASSET, "", "name of the asset you will want to buy")
+	buyCommand.Flags().String(consts.FLAG_QUOTE, "", "name of the asset you will want to spend")
 
 	buyCommand.Flags().Float64(consts.START_AT_PRICE, 0, "price where you will want to start buying at")
 	buyCommand.Flags().Float64(consts.STOP_AT_PRICE, 0, "price where you will want to stop buying")
 	buyCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first buy order (in quote asset)")
 
-	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.02, "multiplier that defines the distance between your orders")
+	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.05, "multiplier that defines the distance between your orders")
 	buyCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to buy (in quote asset)")
 
 	buyCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
@@ -30,12 +30,12 @@ var buyCommand = &cobra.Command{
 	Use:   "buy",
 	Short: "buy your crypto asset",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		asset, err := cmd.Flags().GetString(consts.FLAG_ASSET)
+		asset, err := flag.GetString(cmd, consts.FLAG_ASSET)
 		if err != nil {
 			return err
 		}
 
-		quote, err := cmd.Flags().GetString(consts.FLAG_QUOTE)
+		quote, err := flag.GetString(cmd, consts.FLAG_QUOTE)
 		if err != nil {
 			return err
 		}

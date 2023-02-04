@@ -11,8 +11,8 @@ import (
 )
 
 func init() {
-	cancelCommand.Flags().String(consts.FLAG_ASSET, "BTC", "base asset")
-	cancelCommand.Flags().String(consts.FLAG_QUOTE, "USDT", "quote asset")
+	cancelCommand.Flags().String(consts.FLAG_ASSET, "", "base asset")
+	cancelCommand.Flags().String(consts.FLAG_QUOTE, "", "quote asset")
 
 	cancelCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
 	cancelCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
@@ -26,12 +26,12 @@ var cancelCommand = &cobra.Command{
 	Use:   "cancel",
 	Short: "cancel your open orders",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		asset, err := cmd.Flags().GetString(consts.FLAG_ASSET)
+		asset, err := flag.GetString(cmd, consts.FLAG_ASSET)
 		if err != nil {
 			return err
 		}
 
-		quote, err := cmd.Flags().GetString(consts.FLAG_QUOTE)
+		quote, err := flag.GetString(cmd, consts.FLAG_QUOTE)
 		if err != nil {
 			return err
 		}

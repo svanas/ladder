@@ -43,39 +43,39 @@ Please note none of the below commands will actually place any orders unless you
 
 Usage: `./ladder sell [flags]`
 
-| flag              | description                                                            | default |
-|-------------------|------------------------------------------------------------------------|---------|
-| --exchange        | name or code of the exchange                                           |         |
-| --asset           | name of the asset you will want to sell                                | BTC     |
-| --quote           | name of the asset you will want to receive                             | USDT    |
-| --start-at-price  | price where you will want to start selling at                          |         |
-| --stop-at-price   | price where you will want to stop selling                              |         |
-| --start-with-size | size of your first sell order (in base asset)                          |         |
-| --mult            | multiplier that defines the distance between your orders               | 1.02    |
-| --size            | the quantity you will want to sell (in base asset)                     |         |
+| flag              | description                                                               |
+|-------------------|---------------------------------------------------------------------------|
+| --exchange        | name or code of the exchange                                              |
+| --asset           | name of the asset you will want to sell (example `BTC`)                   |
+| --quote           | name of the asset you will want to receive (example `USDT`)               |
+| --start-at-price  | price where you will want to start selling at                             |
+| --stop-at-price   | price where you will want to stop selling                                 |
+| --start-with-size | size of your first sell order (in base asset)                             |
+| --mult            | multiplier that defines the distance between your orders (default `1.05`) |
+| --size            | the quantity you will want to sell (in base asset)                        |
 
 ## buy
 
 Usage: `./ladder buy [flags]`
 
-| flag              | description                                                            | default |
-|-------------------|------------------------------------------------------------------------|---------|
-| --exchange        | name or code of the exchange                                           |         |
-| --asset           | name of the asset you will want to buy                                 | BTC     |
-| --quote           | name of the asset you will want to spend                               | USDT    |
-| --start-at-price  | price where you will want to start buying at                           |         |
-| --stop-at-price   | price where you will want to stop buying                               |         |
-| --start-with-size | size of your first buy order (in quote asset)                          |         |
-| --mult            | multiplier that defines the distance between your orders               | 1.02    |
-| --size            | the quantity you will want to buy (in quote asset)                     |         |
+| flag              | description                                                               |
+|-------------------|---------------------------------------------------------------------------|
+| --exchange        | name or code of the exchange                                              |
+| --asset           | name of the asset you will want to buy (example `BTC`)                    |
+| --quote           | name of the asset you will want to spend (example `USDT`)                 |
+| --start-at-price  | price where you will want to start buying at                              |
+| --stop-at-price   | price where you will want to stop buying                                  |
+| --start-with-size | size of your first buy order (in quote asset)                             |
+| --mult            | multiplier that defines the distance between your orders (default `1.05`) |
+| --size            | the quantity you will want to buy (in quote asset)                        |
 
 ## cancel
 
 Usage: `./ladder cancel [flags]`
 
-| flag              | description                                                            | default |
-|-------------------|------------------------------------------------------------------------|---------|
-| --exchange        | name or code of the exchange                                           |         |
-| --asset           | base asset                                                             | BTC     |
-| --quote           | quote asset                                                            | USDT    |
-| --side            | `buy` or `sell`                                                        |         |
+| flag              | description                  |
+|-------------------|------------------------------|
+| --exchange        | name or code of the exchange |
+| --asset           | base asset                   |
+| --quote           | quote asset                  |
+| --side            | `buy` or `sell`              |
