@@ -169,7 +169,7 @@ func (self *Client) CreateOrder(
 	quantity float64,
 	limit float64,
 	timeInForce consts.TimeInForce,
-) (out *Order, err error) {
+) (*Order, error) {
 	type order struct {
 		MarketSymbol string `json:"marketSymbol"`
 		Direction    string `json:"direction"` // BUY or SELL
@@ -201,11 +201,12 @@ func (self *Client) CreateOrder(
 		return nil, err
 	}
 
-	if err := json.Unmarshal(data, out); err != nil {
+	var out Order
+	if err := json.Unmarshal(data, &out); err != nil {
 		return nil, err
 	}
 
-	return out, nil
+	return &out, nil
 }
 
 func (self *Client) CancelOrder(orderId string) error {
@@ -224,15 +225,16 @@ func (self *Client) GetOpenOrders(market string) (orders []Order, err error) {
 	return orders, nil
 }
 
-func (self *Client) GetTicker(market string) (out *Ticker, err error) {
+func (self *Client) GetTicker(market string) (*Ticker, error) {
 	data, err := self.Do("GET", fmt.Sprintf("markets/%s/ticker", market), nil, false)
 	if err != nil {
 		return nil, err
 	}
-	if err := json.Unmarshal(data, out); err != nil {
+	var out Ticker
+	if err := json.Unmarshal(data, &out); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return &out, nil
 }
 
 func ReadOnly() *Client {
