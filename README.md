@@ -1,4 +1,4 @@
-# ladder
+# Ladder
 
 Incremental buying or selling of any crypto asset
 
