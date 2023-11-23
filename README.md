@@ -24,10 +24,9 @@ In essence, you are executing a better dollar-cost-averaging (DCA) trading strat
 ## exchanges
 
 At the time of this writing, the software supports the following exchanges:
-* [Coinbase](https://pro.coinbase.com)
-* [Bitstamp](https://www.bitstamp.net/ref/QWE1MDzZoyPWZNyU)
-* [Bittrex](https://bittrex.com/discover/join?referralCode=CIC-YDN-5DX)
-* [Binance](https://accounts.binance.com/en/register?ref=17133979)
+* [Coinbase](https://www.coinbase.com)
+* [Bitstamp](https://www.bitstamp.net)
+* [Binance](https://www.binance.com)
 
 ## usage
 
