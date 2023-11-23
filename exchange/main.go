@@ -41,7 +41,6 @@ var exchanges []Exchange
 
 func init() {
 	exchanges = append(exchanges, newBitstamp())
-	exchanges = append(exchanges, newBittrex())
 	exchanges = append(exchanges, newBinance())
 }
 
