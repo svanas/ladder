@@ -40,7 +40,6 @@ type Exchange interface {
 var exchanges []Exchange
 
 func init() {
-	exchanges = append(exchanges, newCoinbase())
 	exchanges = append(exchanges, newBitstamp())
 	exchanges = append(exchanges, newBittrex())
 	exchanges = append(exchanges, newBinance())
