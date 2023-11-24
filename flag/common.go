@@ -25,11 +25,6 @@ func getString(name string) (string, error) {
 	return "", fmt.Errorf("--%s does not exist", name)
 }
 
-// --test=[true|false]
-func Test() bool {
-	return getBool(consts.FLAG_TEST)
-}
-
 // --mult=[1..2]
 func Mult(cmd *cobra.Command) (float64, error) {
 	value, err := GetFloat64(cmd, consts.FLAG_MULT)
@@ -49,9 +44,4 @@ func ApiKey() (string, error) {
 // --api-secret=YYY
 func ApiSecret() (string, error) {
 	return getString(consts.FLAG_API_SECRET)
-}
-
-// --api-passphrase=ZZZ
-func ApiPassphrase() (string, error) {
-	return getString(consts.FLAG_API_PASSPHRASE)
 }

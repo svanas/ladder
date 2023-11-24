@@ -19,8 +19,6 @@ var (
 )
 
 func New(apiKey, apiSecret string) (*Client, error) {
-	binance.UseTestnet = flag.Test()
-
 	client := binance.NewClient(apiKey, apiSecret)
 	client.HTTPClient = &http.Client{
 		Timeout: 30 * time.Second,
