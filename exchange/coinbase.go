@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/svanas/ladder/api/coinbase"
 	consts "github.com/svanas/ladder/constants"
+	"github.com/svanas/ladder/precision"
 )
 
 type Coinbase struct {
@@ -33,8 +35,19 @@ func (self *Coinbase) Orders(market string, side consts.OrderSide) ([]Order, err
 	return nil, errors.New("not implemented")
 }
 
-func (self *Coinbase) Precision(symbol string) (*Precision, error) {
-	return nil, errors.New("not implemented")
+func (self *Coinbase) Precision(market string) (*Precision, error) {
+	client, err := coinbase.New()
+	if err != nil {
+		return nil, err
+	}
+	product, err := client.GetProduct(market)
+	if err != nil {
+		return nil, err
+	}
+	return &Precision{
+		Price: precision.Parse(product.QuoteIncrement),
+		Size:  precision.Parse(product.BaseIncrement),
+	}, nil
 }
 
 func (self *Coinbase) Ticker(market string) (float64, error) {
