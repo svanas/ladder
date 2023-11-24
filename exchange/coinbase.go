@@ -4,11 +4,11 @@ package exchange
 import (
 	"errors"
 	"fmt"
-	"strings"
-
 	"github.com/svanas/ladder/api/coinbase"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
+	"strconv"
+	"strings"
 )
 
 type Coinbase struct {
@@ -51,7 +51,15 @@ func (self *Coinbase) Precision(market string) (*Precision, error) {
 }
 
 func (self *Coinbase) Ticker(market string) (float64, error) {
-	return 0, errors.New("not implemented")
+	client, err := coinbase.New()
+	if err != nil {
+		return 0, err
+	}
+	product, err := client.GetProduct(market)
+	if err != nil {
+		return 0, err
+	}
+	return strconv.ParseFloat(product.Price, 64)
 }
 
 func newCoinbase() Exchange {
