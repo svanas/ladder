@@ -1,6 +1,6 @@
 # Ladder
 
-Incremental buying or selling of any crypto asset
+Incremental buying or selling of any crypto asset.
 
 ## reason to be
 
@@ -12,7 +12,7 @@ Ladder trading is incremental buying or selling of any crypto asset rather than 
 
 Should you want to exit the market and sell your asset, your average sell price will be closer to the ATH. Should you want to enter the market and buy an asset, you'll be buying dips and your average buy price will be closer to the bottom. Either way, you'll maximize your profits by pushing the average price in the desired direction.
 
-In essence, you are executing a better dollar-cost-averaging (DCA) trading strategy where you are selling (or buying) an asset regularly, doing away with the attempt at the market timing. Because this software will slowly but surely increase your order size, your average price will be better.
+In essence, you are executing a better dollar-cost-averaging (DCA) trading strategy where you are selling (or buying) an asset regularly, doing away with the attempt at the market timing. Because this software will slowly but surely increase your order size, your average price will be better (compared to non-laddered DCA)
 
 ## benefits
 
@@ -42,31 +42,31 @@ Please note none of the below commands will actually place any orders unless you
 
 Usage: `./ladder sell [flags]`
 
-| flag              | description                                                                                 |
-|-------------------|---------------------------------------------------------------------------------------------|
-| --exchange        | name or code of the exchange                                                                |
-| --asset           | name of the asset you will want to sell (example `BTC`)                                     |
-| --quote           | name of the asset you will want to receive (example `USDT`)                                 |
-| --start-at-price  | price where you will want to start selling at                                               |
-| --stop-at-price   | price where you will want to stop selling                                                   |
-| --start-with-size | size of your first sell order (in base asset)                                               |
-| --mult            | multiplier that defines the number of orders and the distance between them (default `1.05`) |
-| --size            | the quantity you will want to sell (in base asset)                                          |
+| flag              | description                                                                | default |
+|-------------------|----------------------------------------------------------------------------|---------|
+| --exchange        | name or code of the exchange                                               |         |
+| --asset           | name of the asset you will want to sell                                    | BTC     |
+| --quote           | name of the asset you will want to receive                                 | USDT    |
+| --start-at-price  | price where you will want to start selling at                              |         |
+| --stop-at-price   | price where you will want to stop selling                                  |         |
+| --start-with-size | size of your first sell order (in base asset)                              |         |
+| --mult            | multiplier that defines the number of orders and the distance between them | 1.05    |
+| --size            | the quantity you will want to sell (in base asset)                         |         |
 
 ## buy
 
 Usage: `./ladder buy [flags]`
 
-| flag              | description                                                                                 |
-|-------------------|---------------------------------------------------------------------------------------------|
-| --exchange        | name or code of the exchange                                                                |
-| --asset           | name of the asset you will want to buy (example `BTC`)                                      |
-| --quote           | name of the asset you will want to spend (example `USDT`)                                   |
-| --start-at-price  | price where you will want to start buying at                                                |
-| --stop-at-price   | price where you will want to stop buying                                                    |
-| --start-with-size | size of your first buy order (in quote asset)                                               |
-| --mult            | multiplier that defines the number of orders and the distance between them (default `1.05`) |
-| --size            | the quantity you will want to buy (in quote asset)                                          |
+| flag              | description                                                                | default |
+|-------------------|----------------------------------------------------------------------------|---------|
+| --exchange        | name or code of the exchange                                               |         |
+| --asset           | name of the asset you will want to buy                                     | BTC     |
+| --quote           | name of the asset you will want to spend                                   | USDT    |
+| --start-at-price  | price where you will want to start buying at                               |         |
+| --stop-at-price   | price where you will want to stop buying                                   |         |
+| --start-with-size | size of your first buy order (in quote asset)                              |         |
+| --mult            | multiplier that defines the number of orders and the distance between them | 1.05    |
+| --size            | the quantity you will want to buy (in quote asset)                         |         |
 
 ## cancel
 
