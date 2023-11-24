@@ -4,11 +4,12 @@ package exchange
 import (
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"github.com/svanas/ladder/api/coinbase"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
-	"strconv"
-	"strings"
 )
 
 type Coinbase struct {
@@ -32,7 +33,27 @@ func (self *Coinbase) Order(market string, side consts.OrderSide, size, price fl
 }
 
 func (self *Coinbase) Orders(market string, side consts.OrderSide) ([]Order, error) {
-	return nil, errors.New("not implemented")
+	client, err := coinbase.New()
+	if err != nil {
+		return nil, err
+	}
+
+	orders, err := client.GetOpenOrders(market, side)
+	if err != nil {
+		return nil, err
+	}
+
+	var output []Order
+	for _, order := range orders {
+		if order.Configuration.Limit.Size > 0 && order.Configuration.Limit.Price > 0 {
+			output = append(output, Order{
+				Size:  order.Configuration.Limit.Size,
+				Price: order.Configuration.Limit.Price,
+			})
+		}
+	}
+
+	return output, nil
 }
 
 func (self *Coinbase) Precision(market string) (*Precision, error) {
