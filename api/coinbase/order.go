@@ -3,9 +3,11 @@ package coinbase
 
 import (
 	"encoding/json"
+	"errors"
 	"net/url"
 
 	consts "github.com/svanas/ladder/constants"
+	"github.com/svanas/ladder/uuid"
 )
 
 type Order struct {
@@ -42,4 +44,51 @@ func (self *Client) GetOpenOrders(market string, side consts.OrderSide) ([]Order
 		return nil, err
 	}
 	return response.Orders, nil
+}
+
+func (self *Client) CreateOrder(market string, side consts.OrderSide, size, price float64) (string, error) { // --> (orderId, error)
+	type Request struct {
+		ClientOrderId string `json:"client_order_id"`
+		ProductId     string `json:"product_id"`
+		Side          string `json:"side"`
+		Configuration struct {
+			Limit struct {
+				Size  float64 `json:"base_size,string"`
+				Price float64 `json:"limit_price,string"`
+			} `json:"limit_limit_gtc"`
+		} `json:"order_configuration"`
+	}
+
+	request := Request{
+		ClientOrderId: uuid.New().String(),
+		ProductId:     market,
+		Side:          side.String(),
+	}
+	request.Configuration.Limit.Size = size
+	request.Configuration.Limit.Price = price
+
+	body, err := json.Marshal(&request)
+	if err != nil {
+		return "", err
+	}
+
+	data, err := self.post("orders", body)
+	if err != nil {
+		return "", err
+	}
+
+	type Response struct {
+		Success bool   `json:"success"`
+		Reason  string `json:"failure_reason"`
+		OrderId string `json:"order_id"`
+	}
+	var response Response
+	if err := json.Unmarshal(data, &response); err != nil {
+		return "", err
+	}
+	if !response.Success {
+		return "", errors.New(response.Reason)
+	}
+
+	return response.OrderId, nil
 }

@@ -29,7 +29,11 @@ func (self *Coinbase) Info() *info {
 }
 
 func (self *Coinbase) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
-	return "", errors.New("not implemented")
+	client, err := coinbase.New()
+	if err != nil {
+		return "", err
+	}
+	return client.CreateOrder(market, side, size, price)
 }
 
 func (self *Coinbase) Orders(market string, side consts.OrderSide) ([]Order, error) {

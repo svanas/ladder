@@ -2,12 +2,14 @@
 package coinbase
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"net/http"
 	"net/url"
@@ -30,6 +32,33 @@ func format(path string) string {
 	} else {
 		return fmt.Sprintf("/api/%s/brokerage/%s", apiVersion, path)
 	}
+}
+
+func (self *Client) do(request *http.Request) ([]byte, error) {
+	response, err := self.httpClient.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	if response.StatusCode < 200 || response.StatusCode >= 400 {
+		type Error struct {
+			Message string `json:"message"`
+		}
+		var error Error
+		if json.Unmarshal(body, &error) == nil {
+			return nil, errors.New(error.Message)
+		} else {
+			return nil, errors.New(response.Status)
+		}
+	}
+
+	return body, nil
 }
 
 func (self *Client) get(path string, values *url.Values) ([]byte, error) {
@@ -58,30 +87,43 @@ func (self *Client) get(path string, values *url.Values) ([]byte, error) {
 	}
 	request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
 
-	response, err := self.httpClient.Do(request)
+	return self.do(request)
+}
+
+func (self *Client) post(path string, body []byte) ([]byte, error) {
+	beforeRequest()
+	defer afterRequest()
+
+	request, err := http.NewRequest("POST", (apiBase + format(path)), func() io.Reader {
+		if body != nil {
+			return bytes.NewReader(body)
+		}
+		return nil
+	}())
 	if err != nil {
 		return nil, err
 	}
-	defer response.Body.Close()
+	if body != nil {
+		request.Header.Add("Content-Type", "application/json")
+	}
 
-	body, err := ioutil.ReadAll(response.Body)
-	if err != nil {
+	nonce := strconv.FormatInt((time.Now().UTC().Unix()), 10)
+
+	request.Header.Add("CB-ACCESS-KEY", self.apiKey)
+	request.Header.Add("CB-ACCESS-TIMESTAMP", nonce)
+
+	mac := hmac.New(sha256.New, []byte(self.apiSecret))
+	if _, err := mac.Write([]byte(nonce + "POST" + format(path) + func() string {
+		if body != nil {
+			return string(body)
+		}
+		return ""
+	}())); err != nil {
 		return nil, err
 	}
+	request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
 
-	if response.StatusCode < 200 || response.StatusCode >= 400 {
-		type Error struct {
-			Message string `json:"message"`
-		}
-		var error Error
-		if json.Unmarshal(body, &error) == nil {
-			return nil, errors.New(error.Message)
-		} else {
-			return nil, errors.New(response.Status)
-		}
-	}
-
-	return body, nil
+	return self.do(request)
 }
 
 func New() (*Client, error) {
