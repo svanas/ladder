@@ -2,7 +2,6 @@
 package exchange
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -17,7 +16,22 @@ type Coinbase struct {
 }
 
 func (self *Coinbase) Cancel(market string, side consts.OrderSide) error {
-	return errors.New("not implemented")
+	client, err := coinbase.New()
+	if err != nil {
+		return err
+	}
+
+	orders, err := client.GetOpenOrders(market, side)
+	if err != nil {
+		return err
+	}
+
+	var orderIds []string
+	for _, order := range orders {
+		orderIds = append(orderIds, order.OrderId)
+	}
+
+	return client.CancelOrders(orderIds)
 }
 
 func (self *Coinbase) FormatMarket(asset, quote string) string {

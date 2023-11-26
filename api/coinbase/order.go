@@ -92,3 +92,21 @@ func (self *Client) CreateOrder(market string, side consts.OrderSide, size, pric
 
 	return response.OrderId, nil
 }
+
+func (self *Client) CancelOrders(orderIds []string) error {
+	type Request struct {
+		OrderIds []string `json:"order_ids"`
+	}
+	request := Request{OrderIds: orderIds}
+
+	body, err := json.Marshal(request)
+	if err != nil {
+		return err
+	}
+
+	if _, err := self.post("orders/batch_cancel", body); err != nil {
+		return err
+	}
+
+	return nil
+}
