@@ -29,7 +29,7 @@ type Precision struct {
 
 type Exchange interface {
 	Cancel(market string, side consts.OrderSide) error
-	FormatMarket(asset, quote string) string
+	FormatMarket(asset, quote string) (string, error)
 	Info() *info
 	Order(market string, side consts.OrderSide, size, price float64) (oid string, err error)
 	Orders(market string, side consts.OrderSide) ([]Order, error)

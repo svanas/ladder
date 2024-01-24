@@ -86,7 +86,10 @@ var sellCommand = &cobra.Command{
 			return err
 		}
 
-		market := cex.FormatMarket(asset, quote)
+		market, err := cex.FormatMarket(asset, quote)
+		if err != nil {
+			return err
+		}
 
 		prec, err := cex.Precision(market)
 		if err != nil {
