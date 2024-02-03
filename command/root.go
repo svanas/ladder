@@ -6,8 +6,10 @@ import (
 )
 
 func init() {
-	rootCommand.PersistentFlags().String(consts.FLAG_API_KEY, "", "your API key")
-	rootCommand.PersistentFlags().String(consts.FLAG_API_SECRET, "", "your API secret")
+	rootCommand.PersistentFlags().String(consts.FLAG_API_KEY, "", "your API key (optional, CEX-only)")
+	rootCommand.PersistentFlags().String(consts.FLAG_API_SECRET, "", "your API secret (optional, CEX-only)")
+	rootCommand.PersistentFlags().Int(consts.FLAG_CHAIN_ID, 0, "chain ID (optional, please see https://chainlist.org)")
+	rootCommand.PersistentFlags().String(consts.FLAG_PRIVATE_KEY, "", "your private key (optional, DEX-only)")
 	rootCommand.CompletionOptions.HiddenDefaultCmd = true
 }
 

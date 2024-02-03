@@ -36,12 +36,12 @@ var cancelCommand = &cobra.Command{
 			return err
 		}
 
-		cex, err := func() (exchange.Exchange, error) {
-			cex, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
+		exc, err := func() (exchange.Exchange, error) {
+			exc, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
 			if err != nil {
 				return nil, err
 			}
-			return exchange.FindByName(cex)
+			return exchange.FindByName(exc)
 		}()
 		if err != nil {
 			return err
@@ -63,12 +63,12 @@ var cancelCommand = &cobra.Command{
 			return err
 		}
 
-		market, err := cex.FormatMarket(asset, quote)
+		market, err := exc.FormatMarket(asset, quote)
 		if err != nil {
 			return err
 		}
 
-		prec, err := cex.Precision(market)
+		prec, err := exc.Precision(market)
 		if err != nil {
 			return err
 		}
@@ -79,11 +79,11 @@ var cancelCommand = &cobra.Command{
 		}
 
 		if !dry_run {
-			if err := cex.Cancel(market, side); err != nil {
+			if err := exc.Cancel(market, side); err != nil {
 				return err
 			}
 		} else {
-			orders, err := cex.Orders(market, side)
+			orders, err := exc.Orders(market, side)
 			if err != nil {
 				return err
 			}

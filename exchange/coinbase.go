@@ -3,12 +3,12 @@ package exchange
 
 import (
 	"fmt"
-	"strconv"
-	"strings"
-
 	"github.com/svanas/ladder/api/coinbase"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
+	"math/big"
+	"strconv"
+	"strings"
 )
 
 type Coinbase struct {
@@ -42,12 +42,21 @@ func (self *Coinbase) Info() *info {
 	return self.info
 }
 
-func (self *Coinbase) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
+func (self *Coinbase) Order(market string, side consts.OrderSide, size, price *big.Float) error {
 	client, err := coinbase.New()
 	if err != nil {
-		return "", err
+		return err
 	}
-	return client.CreateOrder(market, side, size, price)
+	if _, err := client.CreateOrder(market, side, func() float64 {
+		out, _ := size.Float64()
+		return out
+	}(), func() float64 {
+		out, _ := price.Float64()
+		return out
+	}()); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (self *Coinbase) Orders(market string, side consts.OrderSide) ([]Order, error) {
