@@ -3,6 +3,7 @@ package exchange
 
 import (
 	"fmt"
+	"math/big"
 	"strconv"
 	"strings"
 
@@ -44,25 +45,27 @@ func (self *Bitstamp) Info() *info {
 	return self.info
 }
 
-func (self *Bitstamp) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
+func (self *Bitstamp) Order(market string, side consts.OrderSide, size, price *big.Float) error {
 	client, err := bitstamp.ReadWrite()
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	order, err := func() (*bitstamp.Order, error) {
+	s, _ := size.Float64()
+	p, _ := size.Float64()
+
+	if _, err := func() (*bitstamp.Order, error) {
 		if side == consts.BUY {
-			return client.BuyLimitOrder(market, size, price)
+			return client.BuyLimitOrder(market, s, p)
 		} else if side == consts.SELL {
-			return client.SellLimitOrder(market, size, price)
+			return client.SellLimitOrder(market, s, p)
 		}
 		return nil, fmt.Errorf("unknown order side %v", side)
-	}()
-	if err != nil {
-		return "", err
+	}(); err != nil {
+		return err
 	}
 
-	return order.Id, nil
+	return nil
 }
 
 func (self *Bitstamp) Orders(market string, side consts.OrderSide) ([]Order, error) {

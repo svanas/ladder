@@ -75,23 +75,23 @@ var sellCommand = &cobra.Command{
 		}
 		steps--
 
-		cex, err := func() (exchange.Exchange, error) {
-			cex, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
+		exc, err := func() (exchange.Exchange, error) {
+			exc, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
 			if err != nil {
 				return nil, err
 			}
-			return exchange.FindByName(cex)
+			return exchange.FindByName(exc)
 		}()
 		if err != nil {
 			return err
 		}
 
-		market, err := cex.FormatMarket(asset, quote)
+		market, err := exc.FormatMarket(asset, quote)
 		if err != nil {
 			return err
 		}
 
-		prec, err := cex.Precision(market)
+		prec, err := exc.Precision(market)
 		if err != nil {
 			return err
 		}
@@ -103,7 +103,7 @@ var sellCommand = &cobra.Command{
 
 		if !dry_run {
 			// cancel existing limit sell orders
-			if err := cex.Cancel(market, consts.SELL); err != nil {
+			if err := exc.Cancel(market, consts.SELL); err != nil {
 				return err
 			}
 			// place new limit sell orders
@@ -111,7 +111,7 @@ var sellCommand = &cobra.Command{
 				all bool // yes to all
 				num int  // result
 			)
-			ticker, err := cex.Ticker(market)
+			ticker, err := exc.Ticker(market)
 			if err != nil {
 				return err
 			}
@@ -120,12 +120,12 @@ var sellCommand = &cobra.Command{
 				if order.Price > ticker {
 					yes := all
 					if !yes {
-						a := order.Prompt(market)
+						a := internal.Prompt(&order, market)
 						yes = a == answer.YES || a == answer.YES_TO_ALL
 						all = all || a == answer.YES_TO_ALL
 					}
 					if yes {
-						if _, err := cex.Order(market, consts.SELL, order.Size, order.Price); err != nil {
+						if err := exc.Order(market, consts.SELL, order.BigSize(), order.BigPrice()); err != nil {
 							return err
 						}
 						num++

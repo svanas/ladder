@@ -3,9 +3,9 @@ package exchange
 
 import (
 	"fmt"
-	"strings"
-
 	consts "github.com/svanas/ladder/constants"
+	"math/big"
+	"strings"
 )
 
 type info struct {
@@ -22,6 +22,14 @@ type Order struct {
 	Price float64
 }
 
+func (order *Order) BigSize() *big.Float {
+	return new(big.Float).SetFloat64(order.Size)
+}
+
+func (order *Order) BigPrice() *big.Float {
+	return new(big.Float).SetFloat64(order.Price)
+}
+
 type Precision struct {
 	Price int
 	Size  int
@@ -31,7 +39,7 @@ type Exchange interface {
 	Cancel(market string, side consts.OrderSide) error
 	FormatMarket(asset, quote string) (string, error)
 	Info() *info
-	Order(market string, side consts.OrderSide, size, price float64) (oid string, err error)
+	Order(market string, side consts.OrderSide, size, price *big.Float) error
 	Orders(market string, side consts.OrderSide) ([]Order, error)
 	Precision(market string) (*Precision, error)
 	Ticker(market string) (float64, error)
@@ -43,6 +51,7 @@ func init() {
 	exchanges = append(exchanges, newCoinbase())
 	exchanges = append(exchanges, newBitstamp())
 	exchanges = append(exchanges, newBinance())
+	exchanges = append(exchanges, newParaSwap())
 }
 
 func FindByName(name string) (Exchange, error) {

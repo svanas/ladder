@@ -9,7 +9,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"math/big"
 	"net/http"
 	"net/url"
@@ -51,7 +51,7 @@ func (self *Client) reason(body []byte) error {
 
 func (self *Client) get(path string) ([]byte, error) {
 	// satisfy the rate limiter (limited to 8000 requests per 10 minutes)
-	beforeRequest("GET", path)
+	beforeRequest()
 	defer afterRequest()
 
 	// parse the bitstamp URL
@@ -73,7 +73,7 @@ func (self *Client) get(path string) ([]byte, error) {
 		return nil, fmt.Errorf("GET %s %s", resp.Status, path)
 	}
 
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
@@ -88,7 +88,7 @@ func (self *Client) get(path string) ([]byte, error) {
 
 func (self *Client) post(path string, values url.Values) ([]byte, error) {
 	// satisfy the rate limiter (limited to 8000 requests per 10 minutes)
-	beforeRequest("POST", path)
+	beforeRequest()
 	defer afterRequest()
 
 	// parse the bitstamp URL
@@ -169,7 +169,7 @@ func (self *Client) post(path string, values url.Values) ([]byte, error) {
 	}
 
 	// read the body of the http message into a byte array
-	body, err := ioutil.ReadAll(resp.Body)
+	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}

@@ -7,22 +7,18 @@ import (
 
 	"github.com/jedib0t/go-pretty/v6/table"
 	"github.com/svanas/ladder/answer"
+	"github.com/svanas/ladder/exchange"
 )
 
-type Order struct {
-	Price float64
-	Size  float64
-}
-
-func (self *Order) Prompt(market string) answer.Answer {
+func Prompt(order *exchange.Order, market string) answer.Answer {
 	const TITLE = "Open this order?"
 
 	tbl := table.NewWriter()
 	tbl.AppendHeader(table.Row{TITLE, TITLE}, table.RowConfig{AutoMerge: true})
 	tbl.AppendRows([]table.Row{
 		{"Market", market},
-		{"Price", strconv.FormatFloat(self.Price, 'f', -1, 64)},
-		{"Size", strconv.FormatFloat(self.Size, 'f', -1, 64)},
+		{"Price", strconv.FormatFloat(order.Price, 'f', -1, 64)},
+		{"Size", strconv.FormatFloat(order.Size, 'f', -1, 64)},
 	})
 	fmt.Println(tbl.Render())
 

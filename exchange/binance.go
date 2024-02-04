@@ -2,11 +2,11 @@
 package exchange
 
 import (
-	"strconv"
-	"strings"
-
 	"github.com/svanas/ladder/api/binance"
 	consts "github.com/svanas/ladder/constants"
+	"math/big"
+	"strconv"
+	"strings"
 )
 
 type Binance struct {
@@ -43,18 +43,23 @@ func (self *Binance) Info() *info {
 	return self.info
 }
 
-func (self *Binance) Order(market string, side consts.OrderSide, size, price float64) (oid string, err error) {
+func (self *Binance) Order(market string, side consts.OrderSide, size, price *big.Float) error {
 	client, err := binance.ReadWrite()
 	if err != nil {
-		return "", err
+		return err
 	}
 
-	order, err := client.CreateOrder(market, side, size, price)
-	if err != nil {
-		return "", err
+	if _, err := client.CreateOrder(market, side, func() float64 {
+		out, _ := size.Float64()
+		return out
+	}(), func() float64 {
+		out, _ := price.Float64()
+		return out
+	}()); err != nil {
+		return err
 	}
 
-	return strconv.FormatInt(order.OrderID, 10), nil
+	return nil
 }
 
 func (self *Binance) Orders(market string, side consts.OrderSide) ([]Order, error) {

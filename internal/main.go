@@ -37,7 +37,7 @@ func SimulateBuy(start_at_price, stop_at_price, start_with_size, mult float64, s
 }
 
 // compute every order
-func Orders(start_at_price, stop_at_price, start_with_size, mult float64, steps int, prec *exchange.Precision) (result []Order) {
+func Orders(start_at_price, stop_at_price, start_with_size, mult float64, steps int, prec *exchange.Precision) (result []exchange.Order) {
 	// this is the very 1st order we will always make
 	current_price := start_at_price
 	current_size := start_with_size
@@ -46,7 +46,7 @@ func Orders(start_at_price, stop_at_price, start_with_size, mult float64, steps 
 	delta := (stop_at_price - start_at_price) / (float64(steps) - 1)
 
 	for step := 0; step < steps; step++ {
-		result = append(result, Order{
+		result = append(result, exchange.Order{
 			Price: precision.Round(current_price, prec.Price),
 			Size:  precision.Round(current_size, prec.Size),
 		})
