@@ -27,6 +27,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Coinbase](https://www.coinbase.com)
 * [Bitstamp](https://www.bitstamp.net)
 * [Binance](https://www.binance.com)
+* [ParaSwap](https://www.paraswap.io)
 
 ## usage
 
@@ -78,3 +79,14 @@ Usage: `./ladder cancel [flags]`
 | --asset           | base asset                   |
 | --quote           | quote asset                  |
 | --side            | `buy` or `sell`              |
+
+## compiling
+
+1. Download and install [Go version 1.19](https://go.dev) (or later)
+2. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key)
+3. Enter your [Infura](https://www.infura.io) API key
+4. Should you decide to fork this repo, then do not commit your API key. Your API key is not to be shared.
+
+## disclaimer
+
+Ladder is provided free of charge. There is no warranty. The authors do not assume any responsibility for bugs, vulnerabilities, or any other technical defects. Use at your own risk.
