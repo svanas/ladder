@@ -5,11 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"math/big"
+	"net/http"
+
 	"github.com/svanas/1inch-sdk/golang/client/orderbook"
 	"github.com/svanas/1inch-sdk/golang/helpers/consts/contracts"
 	"github.com/svanas/ladder/api/web3"
-	"math/big"
-	"net/http"
 )
 
 func GetMakerAmount(order *orderbook.OrderResponse) (*big.Int, error) {
@@ -88,7 +89,7 @@ func (client *Client) PlaceOrder(params *orderbook.CreateOrderParams) error {
 	if !ok {
 		return fmt.Errorf("cannot convert %s to big.Int", params.MakingAmount)
 	}
-	if allowance.Cmp(makerAmount) < 1 {
+	if allowance.Cmp(makerAmount) < 0 {
 		return fmt.Errorf("please approve %s on https://app.1inch.io/#/%d/advanced/limit-order", func() string {
 			if symbol, err := web3.GetSymbol(params.FromToken); err == nil && symbol != "" {
 				return symbol

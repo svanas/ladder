@@ -101,6 +101,7 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price *bi
 			WalletKey:    privateKey,
 			SourceWallet: web3.Checksum(maker),
 			Receiver:     "0x0000000000000000000000000000000000000000",
+			SkipWarnings: true,
 		}
 		switch side {
 		case consts.BUY:
