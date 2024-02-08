@@ -30,6 +30,14 @@ At the time of this writing, the software supports the following exchanges:
 * [ParaSwap](https://www.paraswap.io)
 * [1inch](https://1inch.io)
 
+## who is paying for gas?
+
+Please note this software will NEVER broadcast an on-chain transaction to the network and spend your ETH on gas. This software only ever interacts with (off-chain) CEXes or send signatures (aka gasless transactions) to a DEX.
+
+If on-chain transactions are needed (for example: to approve an asset or cancel your limit orders on a DEX), this software will prompt you with a nice message and be done with it. This is the designed behavior and not a bug.
+
+When your limit orders are getting filled on a DEX, market makers are paying for the gas.
+
 ## usage
 
 `./ladder [command] [flags]`
