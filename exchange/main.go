@@ -3,9 +3,10 @@ package exchange
 
 import (
 	"fmt"
-	consts "github.com/svanas/ladder/constants"
 	"math/big"
 	"strings"
+
+	consts "github.com/svanas/ladder/constants"
 )
 
 type info struct {
@@ -52,6 +53,7 @@ func init() {
 	exchanges = append(exchanges, newBitstamp())
 	exchanges = append(exchanges, newBinance())
 	exchanges = append(exchanges, newParaSwap())
+	exchanges = append(exchanges, newOneInch())
 }
 
 func FindByName(name string) (Exchange, error) {

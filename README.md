@@ -28,6 +28,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Bitstamp](https://www.bitstamp.net)
 * [Binance](https://www.binance.com)
 * [ParaSwap](https://www.paraswap.io)
+* [1inch](https://1inch.io)
 
 ## usage
 
@@ -83,9 +84,15 @@ Usage: `./ladder cancel [flags]`
 ## compiling
 
 1. Download and install [Go version 1.19](https://go.dev) (or later)
-2. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key)
-3. Enter your [Infura](https://www.infura.io) API key
-4. Should you decide to fork this repo, then do not commit your API key. Your API key is not to be shared.
+2. Navigate to [Infura](https://www.infura.io) and generate yourself an API key
+3. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key) and paste your [Infura](https://www.infura.io) API key
+4. Navigate to the [1inch dev portal](https://portal.1inch.dev) and generate yourself an API key
+5. Open [1inch.api.key](https://github.com/svanas/ladder/blob/main/api/oneinch/1inch.api.key) and paste your [1inch](https://1inch.io) API key
+6. Should you decide to fork this repo, then do not commit your API keys. Your API keys are not to be shared.
+
+## support
+
+Ladder is free, unsupported software. But if you got questions, you are welcome to join [this Telegram group](https://t.me/laddercryptobot).
 
 ## disclaimer
 

@@ -7,6 +7,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.11
 	github.com/jedib0t/go-pretty/v6 v6.5.3
 	github.com/spf13/cobra v1.8.0
+	github.com/svanas/1inch-sdk/golang v0.0.0-20240207150341-1c10ca964191
 )
 
 require (
@@ -22,6 +23,7 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/ethereum/c-kzg-4844 v0.4.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
+	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/holiman/uint256 v1.2.4 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect

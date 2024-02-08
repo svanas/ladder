@@ -5,11 +5,12 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	geth "github.com/ethereum/go-ethereum/ethclient"
-	"math/big"
 )
 
 type Client struct {
@@ -22,30 +23,47 @@ var apiKey string
 //go:embed erc20.abi.json
 var erc20 []byte
 
-func endpoint(chainId int64) (string, error) {
+const (
+	Ethereum          int64 = 1
+	Optimism          int64 = 10
+	BinanceSmartChain int64 = 56
+	Polygon           int64 = 137
+	Fantom            int64 = 250
+	Base              int64 = 8453
+	Arbitrum          int64 = 42161
+	Avalanche         int64 = 43114
+)
+
+var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Fantom, Base, Arbitrum, Avalanche}
+
+func Endpoint(chainId int64) (string, error) {
 	switch chainId {
-	case 1: // Ethereum
+	case Ethereum:
 		return fmt.Sprintf("https://mainnet.infura.io/v3/%s", apiKey), nil
-	case 10: // Optimism
+	case Optimism:
 		return fmt.Sprintf("https://optimism-mainnet.infura.io/v3/%s", apiKey), nil
-	case 56: // Binance Smart Chain
+	case BinanceSmartChain:
 		return "https://bsc-dataseed.binance.org", nil
-	case 137: // Polygon
+	case Polygon:
 		return fmt.Sprintf("https://polygon-mainnet.infura.io/v3/%s", apiKey), nil
-	case 250: // Fantom
+	case Fantom:
 		return "https://rpc.fantom.network", nil
-	case 8453: // Base
+	case Base:
 		return "https://mainnet.base.org", nil
-	case 42161: // Arbitrum
+	case Arbitrum:
 		return fmt.Sprintf("https://arbitrum-mainnet.infura.io/v3/%s", apiKey), nil
-	case 43114: // Avalanche
+	case Avalanche:
 		return fmt.Sprintf("https://avalanche-mainnet.infura.io/v3/%s", apiKey), nil
 	}
 	return "", fmt.Errorf("chain %d does not exist", chainId)
 }
 
+func Checksum(address string) string {
+	return common.HexToAddress(address).Hex()
+}
+
 func New(chainId int64) (*Client, error) {
-	url, err := endpoint(chainId)
+	url, err := Endpoint(chainId)
 	if err != nil {
 		return nil, err
 	}
