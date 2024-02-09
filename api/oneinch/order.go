@@ -81,7 +81,7 @@ func (client *Client) PlaceOrder(params *orderbook.CreateOrderParams) error {
 	if err != nil {
 		return err
 	}
-	allowance, err := web3.GetAllowance(params.FromToken, params.SourceWallet, router)
+	allowance, err := web3.GetAllowance(params.MakerAsset, params.Maker, router)
 	if err != nil {
 		return err
 	}
@@ -91,15 +91,15 @@ func (client *Client) PlaceOrder(params *orderbook.CreateOrderParams) error {
 	}
 	if allowance.Cmp(makerAmount) < 0 {
 		return fmt.Errorf("please approve %s on https://app.1inch.io/#/%d/advanced/limit-order", func() string {
-			if symbol, err := web3.GetSymbol(params.FromToken); err == nil && symbol != "" {
+			if symbol, err := web3.GetSymbol(params.MakerAsset); err == nil && symbol != "" {
 				return symbol
 			}
-			return params.FromToken
+			return params.MakerAsset
 		}(), params.ChainId)
 	}
 
 	// from params to limit order
-	order, err := orderbook.CreateLimitOrder(*params, params.ChainId, params.WalletKey)
+	order, err := orderbook.CreateLimitOrder(*params)
 	if err != nil {
 		return err
 	}

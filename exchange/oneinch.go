@@ -98,21 +98,21 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price *bi
 	params, err := func() (*orderbook.CreateOrderParams, error) {
 		result := orderbook.CreateOrderParams{
 			ChainId:      int(client.ChainId),
-			WalletKey:    privateKey,
-			SourceWallet: web3.Checksum(maker),
-			Receiver:     "0x0000000000000000000000000000000000000000",
+			PrivateKey:   privateKey,
+			Maker:        web3.Checksum(maker),
+			Taker:        "0x0000000000000000000000000000000000000000",
 			SkipWarnings: true,
 		}
 		switch side {
 		case consts.BUY:
-			result.FromToken = web3.Checksum(quote.address)
-			result.ToToken = web3.Checksum(asset.address)
+			result.MakerAsset = web3.Checksum(quote.address)
+			result.TakerAsset = web3.Checksum(asset.address)
 			result.MakingAmount = precision.F2S(quoteAmount, 0)
 			result.TakingAmount = precision.F2S(assetAmount, 0)
 			return &result, nil
 		case consts.SELL:
-			result.FromToken = web3.Checksum(asset.address)
-			result.ToToken = web3.Checksum(quote.address)
+			result.MakerAsset = web3.Checksum(asset.address)
+			result.TakerAsset = web3.Checksum(quote.address)
 			result.MakingAmount = precision.F2S(assetAmount, 0)
 			result.TakingAmount = precision.F2S(quoteAmount, 0)
 			return &result, nil
