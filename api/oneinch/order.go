@@ -113,6 +113,8 @@ func (client *Client) PlaceOrder(params *orderbook.CreateOrderParams) error {
 	if err != nil {
 		return err
 	}
+	beforeRequest()
+	defer afterRequest()
 	request, err := oneInchClient.NewRequest("POST", fmt.Sprintf("/orderbook/v3.0/%d", params.ChainId), body)
 	if err != nil {
 		return err
