@@ -25,17 +25,25 @@ type coin struct {
 func (dex *dex) parseMarket(chainId int64, market string) (*coin, *coin, error) { // --> (asset, quote, error)
 	symbols := strings.Split(market, "-")
 	if len(symbols) > 1 {
-		assetId, assetAddr, err := dex.coingecko.GetCoin(symbols[0], chainId)
+		assetId, _, assetAddr, err := dex.coingecko.GetCoin(symbols[0], chainId)
 		if err != nil {
 			return nil, nil, err
 		}
-		quoteId, quoteAddr, err := dex.coingecko.GetCoin(symbols[1], chainId)
+		quoteId, _, quoteAddr, err := dex.coingecko.GetCoin(symbols[1], chainId)
 		if err != nil {
 			return nil, nil, err
 		}
 		return &coin{assetId, assetAddr}, &coin{quoteId, quoteAddr}, nil
 	}
 	return nil, nil, fmt.Errorf("market %s does not exist", market)
+}
+
+func (dex *dex) formatSymbol(chainId int64, symbol string) (string, error) {
+	_, sym, _, err := dex.coingecko.GetCoin(symbol, chainId)
+	if err != nil {
+		return "", err
+	}
+	return strings.ToUpper(sym), nil
 }
 
 func (dex *dex) precision(chainId int64, market string) (*Precision, error) {

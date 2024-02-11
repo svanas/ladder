@@ -30,6 +30,14 @@ func (self *ParaSwap) Cancel(market string, side consts.OrderSide) error {
 	return errors.New("please cancel your orders on https://app.paraswap.io/#/limit")
 }
 
+func (self *ParaSwap) FormatSymbol(asset string) (string, error) {
+	client, err := paraswap.ReadOnly()
+	if err != nil {
+		return "", err
+	}
+	return self.formatSymbol(client.ChainId, asset)
+}
+
 func (self *ParaSwap) FormatMarket(asset, quote string) (string, error) {
 	return self.formatMarket(asset, quote)
 }

@@ -125,8 +125,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/supranational/blst v0.3.11 h1:LyU6FolezeWAhvQk0k6O/d49jqgO52MSDDfYgbeoEm4=
 github.com/supranational/blst v0.3.11/go.mod h1:jZJtfjgudtNl4en1tzwPIV3KjUnQUvG3/j+w+fVonLw=
-github.com/svanas/1inch-sdk/golang v0.0.0-20240209092016-a450066cbf1d h1:FVme4dWEwjPnOA8TH90murEAo9CydoBxabwUqqCrQsw=
-github.com/svanas/1inch-sdk/golang v0.0.0-20240209092016-a450066cbf1d/go.mod h1:pOf1lCN4Oj8N/FArGnWacwskfREWcbgYl+LsD/j7q8Y=
+github.com/svanas/1inch-sdk/golang v0.0.0-20240211162506-30822d26b43a h1:elJispaiY1L+RUS9KU6s6SA14omQ5IAeFXTOs8xFYDU=
+github.com/svanas/1inch-sdk/golang v0.0.0-20240211162506-30822d26b43a/go.mod h1:pOf1lCN4Oj8N/FArGnWacwskfREWcbgYl+LsD/j7q8Y=
 github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 h1:epCh84lMvA70Z7CTTCmYQn2CKbY8j86K7/FAIr141uY=
 github.com/tklauser/go-sysconf v0.3.12 h1:0QaGUFOdQaIVdPgfITYzaTegZvdCjmYO52cSFAEVmqU=
 github.com/tklauser/go-sysconf v0.3.12/go.mod h1:Ho14jnntGE1fpdOqQEEaiKRpvIavV0hSfmBq8nJbHYI=

@@ -35,6 +35,10 @@ func (self *Binance) Cancel(market string, side consts.OrderSide) error {
 	return nil
 }
 
+func (self *Binance) FormatSymbol(asset string) (string, error) {
+	return strings.ToUpper(asset), nil
+}
+
 func (self *Binance) FormatMarket(asset, quote string) (string, error) {
 	return strings.ToUpper(asset + quote), nil
 }

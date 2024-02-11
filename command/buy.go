@@ -22,6 +22,7 @@ func init() {
 
 	buyCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
 	buyCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
+	buyCommand.Flags().Bool(consts.FLAG_CANCEL, true, "cancel existing limit orders (if any)")
 
 	rootCommand.AddCommand(buyCommand)
 }
@@ -101,10 +102,23 @@ var buyCommand = &cobra.Command{
 			return err
 		}
 
+		if asset, err = exc.FormatSymbol(asset); err != nil {
+			return err
+		}
+		if quote, err = exc.FormatSymbol(quote); err != nil {
+			return err
+		}
+
 		if !dry_run {
 			// cancel existing limit buy orders
-			if err := exc.Cancel(market, consts.BUY); err != nil {
+			cancel, err := cmd.Flags().GetBool(consts.FLAG_CANCEL)
+			if err != nil {
 				return err
+			}
+			if cancel {
+				if err := exc.Cancel(market, consts.BUY); err != nil {
+					return err
+				}
 			}
 			// place new limit buy orders
 			var (
@@ -120,7 +134,10 @@ var buyCommand = &cobra.Command{
 				if order.Price < ticker {
 					yes := all
 					if !yes {
-						a := internal.Prompt(&order, market)
+						a := internal.Prompt(&order, func() string {
+							market, _ := exc.FormatMarket(asset, quote)
+							return market
+						}())
 						yes = a == answer.YES || a == answer.YES_TO_ALL
 						all = all || a == answer.YES_TO_ALL
 					}

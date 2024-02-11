@@ -15,4 +15,5 @@ const (
 	FLAG_SIDE        = "side"
 	FLAG_CHAIN_ID    = "chain-id"
 	FLAG_PRIVATE_KEY = "private-key"
+	FLAG_CANCEL      = "cancel"
 )
