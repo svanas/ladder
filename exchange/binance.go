@@ -2,11 +2,12 @@
 package exchange
 
 import (
-	"github.com/svanas/ladder/api/binance"
-	consts "github.com/svanas/ladder/constants"
 	"math/big"
 	"strconv"
 	"strings"
+
+	"github.com/svanas/ladder/api/binance"
+	consts "github.com/svanas/ladder/constants"
 )
 
 type Binance struct {

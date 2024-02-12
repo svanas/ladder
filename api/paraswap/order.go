@@ -1,11 +1,10 @@
 package paraswap
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"math/big"
-	"math/rand"
-	"time"
 
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -117,10 +116,11 @@ func (client *Client) PlaceOrder(order *Order) error {
 	if !ok {
 		return fmt.Errorf("cannot set %s to big.Int", order.Taker)
 	}
-	order.NonceAndMeta = new(big.Int).Add(taker, new(big.Int).Lsh(new(big.Int).SetInt64(func() int64 {
-		rand.Seed(time.Now().UnixNano())
-		return rand.Int63n(2 ^ 53 - 1)
-	}()), 160)).Text(10)
+	order.NonceAndMeta = new(big.Int).Add(taker, new(big.Int).Lsh(func() *big.Int {
+		n, _ := rand.Int(rand.Reader, new(big.Int).SetInt64((2 ^ 53 - 2)))
+		n = new(big.Int).Add(n, new(big.Int).SetInt64(1))
+		return n
+	}(), 160)).Text(10)
 
 	// construct the ERC-712 message
 	typedData := apitypes.TypedData{
