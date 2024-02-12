@@ -8,9 +8,9 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/ethereum/go-ethereum/common"
 	"github.com/svanas/ladder/api/coingecko"
 	"github.com/svanas/ladder/api/paraswap"
+	"github.com/svanas/ladder/api/web3"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
 )
@@ -101,19 +101,19 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price *b
 
 	order, err := func() (*paraswap.Order, error) {
 		result := paraswap.Order{
-			Maker: common.HexToAddress(maker).Hex(),
+			Maker: web3.Checksum(maker),
 			Taker: "0x0000000000000000000000000000000000000000",
 		}
 		switch side {
 		case consts.BUY:
-			result.MakerAsset = common.HexToAddress(quote.address).Hex()
-			result.TakerAsset = common.HexToAddress(asset.address).Hex()
+			result.MakerAsset = web3.Checksum(quote.address)
+			result.TakerAsset = web3.Checksum(asset.address)
 			result.MakerAmount = precision.F2S(quoteAmount, 0)
 			result.TakerAmount = precision.F2S(assetAmount, 0)
 			return &result, nil
 		case consts.SELL:
-			result.MakerAsset = common.HexToAddress(asset.address).Hex()
-			result.TakerAsset = common.HexToAddress(quote.address).Hex()
+			result.MakerAsset = web3.Checksum(asset.address)
+			result.TakerAsset = web3.Checksum(quote.address)
 			result.MakerAmount = precision.F2S(assetAmount, 0)
 			result.TakerAmount = precision.F2S(quoteAmount, 0)
 			return &result, nil

@@ -5,11 +5,12 @@ import (
 	"context"
 	_ "embed"
 	"fmt"
+	"math/big"
+
 	"github.com/ethereum/go-ethereum"
 	"github.com/ethereum/go-ethereum/accounts/abi"
 	"github.com/ethereum/go-ethereum/common"
 	geth "github.com/ethereum/go-ethereum/ethclient"
-	"math/big"
 )
 
 type Client struct {
@@ -42,6 +43,10 @@ func endpoint(chainId int64) (string, error) {
 		return fmt.Sprintf("https://avalanche-mainnet.infura.io/v3/%s", apiKey), nil
 	}
 	return "", fmt.Errorf("chain %d does not exist", chainId)
+}
+
+func Checksum(address string) string {
+	return common.HexToAddress(address).Hex()
 }
 
 func New(chainId int64) (*Client, error) {
