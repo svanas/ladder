@@ -2,6 +2,7 @@ package coingecko
 
 import (
 	"fmt"
+	"github.com/svanas/ladder/api/web3"
 )
 
 const (
@@ -15,21 +16,21 @@ func apiRequestsPerSecond() float64 {
 
 func chainName(chainId int64) (string, error) {
 	switch chainId {
-	case 1:
+	case web3.Ethereum:
 		return "ethereum", nil
-	case 10:
+	case web3.Optimism:
 		return "optimistic-ethereum", nil
-	case 56:
+	case web3.BinanceSmartChain:
 		return "binance-smart-chain", nil
-	case 137:
+	case web3.Polygon:
 		return "polygon-pos", nil
-	case 250:
+	case web3.Fantom:
 		return "fantom", nil
-	case 8453:
+	case web3.Base:
 		return "base", nil
-	case 42161:
+	case web3.Arbitrum:
 		return "arbitrum-one", nil
-	case 43114:
+	case web3.Avalanche:
 		return "avalanche", nil
 	}
 	return "", fmt.Errorf("chain %d does not exist", chainId)
