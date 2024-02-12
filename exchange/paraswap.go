@@ -20,13 +20,6 @@ type ParaSwap struct {
 	coingecko *coingecko.Client
 }
 
-func (self *ParaSwap) getCoingecko() *coingecko.Client {
-	if self.coingecko == nil {
-		self.coingecko = coingecko.New()
-	}
-	return self.coingecko
-}
-
 func (self *ParaSwap) Cancel(market string, side consts.OrderSide) error {
 	orders, err := self.Orders(market, side)
 	if err != nil {
@@ -50,11 +43,11 @@ type coin struct {
 func (self *ParaSwap) parseMarket(client *paraswap.Client, market string) (*coin, *coin, error) { // --> (asset, quote, error
 	symbols := strings.Split(market, "-")
 	if len(symbols) > 1 {
-		assetId, assetAddr, err := self.getCoingecko().GetCoin(symbols[0], client.ChainId)
+		assetId, assetAddr, err := self.coingecko.GetCoin(symbols[0], client.ChainId)
 		if err != nil {
 			return nil, nil, err
 		}
-		quoteId, quoteAddr, err := self.getCoingecko().GetCoin(symbols[1], client.ChainId)
+		quoteId, quoteAddr, err := self.coingecko.GetCoin(symbols[1], client.ChainId)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -78,11 +71,11 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price *b
 		return err
 	}
 
-	assetDec, err := self.getCoingecko().GetDecimals(asset.id, client.ChainId)
+	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
 	if err != nil {
 		return err
 	}
-	quoteDec, err := self.getCoingecko().GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
 	if err != nil {
 		return err
 	}
@@ -138,11 +131,11 @@ func (self *ParaSwap) Orders(market string, side consts.OrderSide) ([]Order, err
 		return nil, err
 	}
 
-	assetDec, err := self.getCoingecko().GetDecimals(asset.id, client.ChainId)
+	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
-	quoteDec, err := self.getCoingecko().GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
@@ -171,20 +164,20 @@ func (self *ParaSwap) Orders(market string, side consts.OrderSide) ([]Order, err
 			if err != nil {
 				return nil, err
 			}
-			if side == consts.SELL && strings.EqualFold(order.MakerAsset, asset.address) && strings.EqualFold(order.TakerAsset, quote.address) {
-				makerUnscaled, _ := new(big.Float).Quo(new(big.Float).SetInt(makerScaled), assetDiv).Float64()
-				takerUnscaled, _ := new(big.Float).Quo(new(big.Float).SetInt(takerScaled), quoteDiv).Float64()
-				result = append(result, Order{
-					Size:  makerUnscaled,
-					Price: precision.Round((takerUnscaled / makerUnscaled), quoteDec),
-				})
-			}
 			if side == consts.BUY && strings.EqualFold(order.MakerAsset, quote.address) && strings.EqualFold(order.TakerAsset, asset.address) {
 				makerUnscaled, _ := new(big.Float).Quo(new(big.Float).SetInt(makerScaled), quoteDiv).Float64()
 				takerUnscaled, _ := new(big.Float).Quo(new(big.Float).SetInt(takerScaled), assetDiv).Float64()
 				result = append(result, Order{
 					Size:  takerUnscaled,
 					Price: precision.Round((makerUnscaled / takerUnscaled), quoteDec),
+				})
+			}
+			if side == consts.SELL && strings.EqualFold(order.MakerAsset, asset.address) && strings.EqualFold(order.TakerAsset, quote.address) {
+				makerUnscaled, _ := new(big.Float).Quo(new(big.Float).SetInt(makerScaled), assetDiv).Float64()
+				takerUnscaled, _ := new(big.Float).Quo(new(big.Float).SetInt(takerScaled), quoteDiv).Float64()
+				result = append(result, Order{
+					Size:  makerUnscaled,
+					Price: precision.Round((takerUnscaled / makerUnscaled), quoteDec),
 				})
 			}
 		}
@@ -201,11 +194,11 @@ func (self *ParaSwap) Precision(market string) (*Precision, error) {
 	if err != nil {
 		return nil, err
 	}
-	assetDec, err := self.getCoingecko().GetDecimals(asset.id, client.ChainId)
+	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
-	quoteDec, err := self.getCoingecko().GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
@@ -224,11 +217,11 @@ func (self *ParaSwap) Ticker(market string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	assetLast, err := self.getCoingecko().GetTicker(asset.id)
+	assetLast, err := self.coingecko.GetTicker(asset.id)
 	if err != nil {
 		return 0, err
 	}
-	quoteLast, err := self.getCoingecko().GetTicker(quote.id)
+	quoteLast, err := self.coingecko.GetTicker(quote.id)
 	if err != nil {
 		return 0, err
 	}
@@ -241,5 +234,6 @@ func newParaSwap() Exchange {
 			code: "PSP",
 			name: "ParaSwap",
 		},
+		coingecko: coingecko.New(),
 	}
 }
