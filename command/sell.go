@@ -102,6 +102,13 @@ var sellCommand = &cobra.Command{
 			return err
 		}
 
+		if asset, err = exc.FormatSymbol(asset); err != nil {
+			return err
+		}
+		if quote, err = exc.FormatSymbol(quote); err != nil {
+			return err
+		}
+
 		if !dry_run {
 			// cancel existing limit sell orders
 			cancel, err := cmd.Flags().GetBool(consts.FLAG_CANCEL)
@@ -127,7 +134,10 @@ var sellCommand = &cobra.Command{
 				if order.Price > ticker {
 					yes := all
 					if !yes {
-						a := internal.Prompt(&order, market)
+						a := internal.Prompt(&order, func() string {
+							market, _ := exc.FormatMarket(asset, quote)
+							return market
+						}())
 						yes = a == answer.YES || a == answer.YES_TO_ALL
 						all = all || a == answer.YES_TO_ALL
 					}

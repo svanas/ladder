@@ -37,6 +37,10 @@ func (self *Bitstamp) Cancel(market string, side consts.OrderSide) error {
 	return nil
 }
 
+func (self *Bitstamp) FormatSymbol(asset string) (string, error) {
+	return strings.ToLower(asset), nil
+}
+
 func (self *Bitstamp) FormatMarket(asset, quote string) (string, error) {
 	return strings.ToLower(asset + quote), nil
 }

@@ -105,26 +105,29 @@ func (client *Client) getCoins() ([]Coin, error) {
 	return client.coins, nil
 }
 
-func (client *Client) GetCoin(symbol string, chainId int64) (string, string, error) { // --> (coinId, address, error)
+func (client *Client) GetCoin(symbol string, chainId int64) (string, string, string, error) { // --> (coinId, symbol, address, error)
 	chainName, err := chainName(chainId)
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	coins, err := client.getCoins()
 	if err != nil {
-		return "", "", err
+		return "", "", "", err
 	}
 	for _, coin := range coins {
-		if strings.EqualFold(coin.Symbol, symbol) {
+		if strings.EqualFold(coin.Symbol, symbol) || (len(symbol) == 42 && strings.HasPrefix(strings.ToLower(symbol), "0x")) {
 			v := reflect.ValueOf(coin.Platforms)
 			for i := 0; i < v.NumField(); i++ {
-				if strings.EqualFold(v.Type().Field(i).Name, strings.ReplaceAll(chainName, "-", "")) && v.Field(i).String() != "" {
-					return coin.Id, v.Field(i).String(), nil
+				if strings.EqualFold(v.Type().Field(i).Name, strings.ReplaceAll(chainName, "-", "")) {
+					address := v.Field(i).String()
+					if address != "" && (strings.EqualFold(coin.Symbol, symbol) || strings.EqualFold(symbol, address)) {
+						return coin.Id, coin.Symbol, address, nil
+					}
 				}
 			}
 		}
 	}
-	return "", "", fmt.Errorf("token %s does not exist on chain %d", symbol, chainId)
+	return "", "", "", fmt.Errorf("token %s does not exist on chain %d", symbol, chainId)
 }
 
 func (client *Client) getCoin(coinId string) (*Coin, error) {

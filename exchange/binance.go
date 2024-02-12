@@ -2,11 +2,12 @@
 package exchange
 
 import (
-	"github.com/svanas/ladder/api/binance"
-	consts "github.com/svanas/ladder/constants"
 	"math/big"
 	"strconv"
 	"strings"
+
+	"github.com/svanas/ladder/api/binance"
+	consts "github.com/svanas/ladder/constants"
 )
 
 type Binance struct {
@@ -33,6 +34,10 @@ func (self *Binance) Cancel(market string, side consts.OrderSide) error {
 	}
 
 	return nil
+}
+
+func (self *Binance) FormatSymbol(asset string) (string, error) {
+	return strings.ToUpper(asset), nil
 }
 
 func (self *Binance) FormatMarket(asset, quote string) (string, error) {

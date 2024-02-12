@@ -3,9 +3,10 @@ package exchange
 
 import (
 	"fmt"
-	consts "github.com/svanas/ladder/constants"
 	"math/big"
 	"strings"
+
+	consts "github.com/svanas/ladder/constants"
 )
 
 type info struct {
@@ -37,6 +38,7 @@ type Precision struct {
 
 type Exchange interface {
 	Cancel(market string, side consts.OrderSide) error
+	FormatSymbol(asset string) (string, error)
 	FormatMarket(asset, quote string) (string, error)
 	Info() *info
 	Order(market string, side consts.OrderSide, size, price *big.Float) error

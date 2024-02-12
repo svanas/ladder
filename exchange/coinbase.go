@@ -34,6 +34,10 @@ func (self *Coinbase) Cancel(market string, side consts.OrderSide) error {
 	return client.CancelOrders(orderIds)
 }
 
+func (self *Coinbase) FormatSymbol(asset string) (string, error) {
+	return strings.ToUpper(asset), nil
+}
+
 func (self *Coinbase) FormatMarket(asset, quote string) (string, error) {
 	return strings.ToUpper(fmt.Sprintf("%s-%s", asset, quote)), nil
 }

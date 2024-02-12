@@ -31,23 +31,35 @@ func (self *ParaSwap) Cancel(market string, side consts.OrderSide) error {
 	return errors.New("please cancel your orders on https://app.paraswap.io/#/limit")
 }
 
+func (self *ParaSwap) FormatSymbol(asset string) (string, error) {
+	client, err := paraswap.ReadOnly()
+	if err != nil {
+		return "", err
+	}
+	_, sym, _, err := self.coingecko.GetCoin(asset, client.ChainId)
+	if err != nil {
+		return "", err
+	}
+	return strings.ToUpper(sym), nil
+}
+
 func (self *ParaSwap) FormatMarket(asset, quote string) (string, error) {
 	return strings.ToUpper(fmt.Sprintf("%s-%s", asset, quote)), nil
 }
 
 type coin struct {
-	id      string
-	address string
+	id      string // coingecko coin id
+	address string // on-chain token address
 }
 
-func (self *ParaSwap) parseMarket(client *paraswap.Client, market string) (*coin, *coin, error) { // --> (asset, quote, error
+func (self *ParaSwap) parseMarket(chainId int64, market string) (*coin, *coin, error) { // --> (asset, quote, error)
 	symbols := strings.Split(market, "-")
 	if len(symbols) > 1 {
-		assetId, assetAddr, err := self.coingecko.GetCoin(symbols[0], client.ChainId)
+		assetId, _, assetAddr, err := self.coingecko.GetCoin(symbols[0], chainId)
 		if err != nil {
 			return nil, nil, err
 		}
-		quoteId, quoteAddr, err := self.coingecko.GetCoin(symbols[1], client.ChainId)
+		quoteId, _, quoteAddr, err := self.coingecko.GetCoin(symbols[1], chainId)
 		if err != nil {
 			return nil, nil, err
 		}
@@ -66,7 +78,7 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price *b
 		return err
 	}
 
-	asset, quote, err := self.parseMarket(client, market)
+	asset, quote, err := self.parseMarket(client.ChainId, market)
 	if err != nil {
 		return err
 	}
@@ -126,7 +138,7 @@ func (self *ParaSwap) Orders(market string, side consts.OrderSide) ([]Order, err
 		return nil, err
 	}
 
-	asset, quote, err := self.parseMarket(client, market)
+	asset, quote, err := self.parseMarket(client.ChainId, market)
 	if err != nil {
 		return nil, err
 	}
@@ -190,7 +202,7 @@ func (self *ParaSwap) Precision(market string) (*Precision, error) {
 	if err != nil {
 		return nil, err
 	}
-	asset, quote, err := self.parseMarket(client, market)
+	asset, quote, err := self.parseMarket(client.ChainId, market)
 	if err != nil {
 		return nil, err
 	}
@@ -213,7 +225,7 @@ func (self *ParaSwap) Ticker(market string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	asset, quote, err := self.parseMarket(client, market)
+	asset, quote, err := self.parseMarket(client.ChainId, market)
 	if err != nil {
 		return 0, err
 	}
