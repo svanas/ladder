@@ -131,7 +131,7 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price *bi
 		return err
 	}
 
-	return client.PlaceOrder(params)
+	return client.PlaceOrder(*params)
 }
 
 func (self *OneInch) Orders(market string, side consts.OrderSide) ([]Order, error) {
@@ -169,11 +169,11 @@ func (self *OneInch) Orders(market string, side consts.OrderSide) ([]Order, erro
 	}
 	var result []Order
 	for _, order := range orders {
-		makerScaled, err := oneinch.GetMakerAmount(&order)
+		makerScaled, err := oneinch.GetMakerAmount(order)
 		if err != nil {
 			return nil, err
 		}
-		takerScaled, err := oneinch.GetTakerAmount(&order)
+		takerScaled, err := oneinch.GetTakerAmount(order)
 		if err != nil {
 			return nil, err
 		}

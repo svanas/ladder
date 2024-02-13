@@ -13,7 +13,7 @@ import (
 	"github.com/svanas/ladder/api/web3"
 )
 
-func GetMakerAmount(order *orderbook.OrderResponse) (*big.Int, error) {
+func GetMakerAmount(order orderbook.OrderResponse) (*big.Int, error) {
 	i, ok := new(big.Int).SetString(order.Data.MakingAmount, 10)
 	if !ok {
 		return nil, fmt.Errorf("cannot convert %s to big.Int", order.Data.MakingAmount)
@@ -21,7 +21,7 @@ func GetMakerAmount(order *orderbook.OrderResponse) (*big.Int, error) {
 	return i, nil
 }
 
-func GetTakerAmount(order *orderbook.OrderResponse) (*big.Int, error) {
+func GetTakerAmount(order orderbook.OrderResponse) (*big.Int, error) {
 	i, ok := new(big.Int).SetString(order.Data.TakingAmount, 10)
 	if !ok {
 		return nil, fmt.Errorf("cannot convert %s to big.Int", order.Data.TakingAmount)
@@ -67,7 +67,7 @@ func (client *Client) GetOrders(owner string) ([]orderbook.OrderResponse, error)
 	return output, nil
 }
 
-func (client *Client) PlaceOrder(params *orderbook.CreateOrderParams) error {
+func (client *Client) PlaceOrder(params orderbook.CreateOrderParams) error {
 	if err := params.Validate(); err != nil {
 		return err
 	}
@@ -99,7 +99,7 @@ func (client *Client) PlaceOrder(params *orderbook.CreateOrderParams) error {
 	}
 
 	// from params to limit order
-	order, err := orderbook.CreateLimitOrder(*params)
+	order, err := orderbook.CreateLimitOrderMessage(params, []string{"0x", "0x", "0x", "0x", "0x"})
 	if err != nil {
 		return err
 	}
