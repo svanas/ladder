@@ -38,7 +38,7 @@ func getInt(name string) (int64, error) {
 }
 
 // --mult=[1..2]
-func Mult(cmd *cobra.Command) (float64, error) {
+func Mult(cmd cobra.Command) (float64, error) {
 	value, err := GetFloat64(cmd, consts.FLAG_MULT)
 	if err == nil {
 		if value < 1 || value >= 2 {

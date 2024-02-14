@@ -24,7 +24,7 @@ type Client struct {
 	baseURL    string
 	apiKey     string
 	apiSecret  string
-	httpClient *http.Client
+	httpClient http.Client
 }
 
 var (
@@ -309,7 +309,7 @@ func ReadOnly() *Client {
 		endpoint,
 		"",
 		"",
-		&http.Client{
+		http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}
@@ -330,7 +330,7 @@ func ReadWrite() (*Client, error) {
 		endpoint,
 		apiKey,
 		apiSecret,
-		&http.Client{
+		http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}, nil

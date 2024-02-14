@@ -41,7 +41,7 @@ func getPrecsFromServer(client *binance.Client) (precs, error) {
 	for {
 		var err error
 		info, err = func() (*binance.ExchangeInfo, error) {
-			beforeRequest(client, exchangeInfo)
+			beforeRequest(*client, exchangeInfo)
 			defer afterRequest()
 			return client.NewExchangeInfoService().Do(context.Background())
 		}()

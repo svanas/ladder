@@ -17,7 +17,7 @@ func (self *Client) GetTicker(symbol string) (float64, error) {
 	for {
 		var err error
 		tickers, err = func() ([]*binance.SymbolPrice, error) {
-			beforeRequest(self.inner, tickerPrice)
+			beforeRequest(*self.inner, tickerPrice)
 			defer afterRequest()
 			return self.inner.NewListPricesService().Symbol(symbol).Do(context.Background())
 		}()
@@ -36,7 +36,7 @@ func (self *Client) GetOpenOrders(symbol string) ([]*binance.Order, error) {
 	for {
 		var err error
 		orders, err = func() ([]*binance.Order, error) {
-			beforeRequest(self.inner, openOrders)
+			beforeRequest(*self.inner, openOrders)
 			defer afterRequest()
 			return self.inner.NewListOpenOrdersService().Symbol(symbol).Do(context.Background())
 		}()
@@ -53,7 +53,7 @@ func (self *Client) GetOpenOrders(symbol string) ([]*binance.Order, error) {
 func (self *Client) CancelOrder(symbol string, orderID int64) error {
 	for {
 		_, err := func() (*binance.CancelOrderResponse, error) {
-			beforeRequest(self.inner, cancelOrder)
+			beforeRequest(*self.inner, cancelOrder)
 			defer afterRequest()
 			return self.inner.NewCancelOrderService().Symbol(symbol).OrderID(orderID).Do(context.Background())
 		}()
@@ -85,7 +85,7 @@ func (self *Client) CreateOrder(symbol string, side consts.OrderSide, size, pric
 	for {
 		var err error
 		order, err = func() (*binance.CreateOrderResponse, error) {
-			beforeRequest(self.inner, createOrder)
+			beforeRequest(*self.inner, createOrder)
 			defer afterRequest()
 			return self.inner.NewCreateOrderService().
 				Symbol(symbol).

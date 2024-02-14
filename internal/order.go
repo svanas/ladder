@@ -10,7 +10,7 @@ import (
 	"github.com/svanas/ladder/exchange"
 )
 
-func Prompt(order *exchange.Order, market string) answer.Answer {
+func Prompt(order exchange.Order, market string) answer.Answer {
 	const TITLE = "Open this order?"
 
 	tbl := table.NewWriter()

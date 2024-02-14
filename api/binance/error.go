@@ -30,7 +30,7 @@ func handleRecvWindowError(client *binance.Client, err error) error {
 	if ok {
 		if apiError.Code == -1021 {
 			// Timestamp for this request is outside of the recvWindow.
-			beforeRequest(client, serverTime)
+			beforeRequest(*client, serverTime)
 			defer afterRequest()
 			if server_time_offset, err = client.NewSetServerTimeService().Do(context.Background()); err == nil {
 				err = &errorContinue{}

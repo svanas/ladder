@@ -23,12 +23,12 @@ type Order struct {
 	Price float64
 }
 
-func (order *Order) BigSize() *big.Float {
-	return new(big.Float).SetFloat64(order.Size)
+func (order *Order) BigSize() big.Float {
+	return *new(big.Float).SetFloat64(order.Size)
 }
 
-func (order *Order) BigPrice() *big.Float {
-	return new(big.Float).SetFloat64(order.Price)
+func (order *Order) BigPrice() big.Float {
+	return *new(big.Float).SetFloat64(order.Price)
 }
 
 type Precision struct {
@@ -41,7 +41,7 @@ type Exchange interface {
 	FormatSymbol(asset string) (string, error)
 	FormatMarket(asset, quote string) (string, error)
 	Info() *info
-	Order(market string, side consts.OrderSide, size, price *big.Float) error
+	Order(market string, side consts.OrderSide, size, price big.Float) error
 	Orders(market string, side consts.OrderSide) ([]Order, error)
 	Precision(market string) (*Precision, error)
 	Ticker(market string) (float64, error)

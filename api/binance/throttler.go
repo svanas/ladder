@@ -13,7 +13,7 @@ var (
 	requestsPerSecond float64 = 0
 )
 
-func getRequestsPerSecondFromInfo(info *binance.ExchangeInfo) int64 {
+func getRequestsPerSecondFromInfo(info binance.ExchangeInfo) int64 {
 	getIntervalNum := func(rl binance.RateLimit) int64 {
 		if rl.IntervalNum > 0 {
 			return rl.IntervalNum
@@ -38,13 +38,13 @@ func getRequestsPerSecondFromInfo(info *binance.ExchangeInfo) int64 {
 	return 20
 }
 
-func getRequestsPerSecondFromClient(client *binance.Client, weight int) float64 {
+func getRequestsPerSecondFromClient(client binance.Client, weight int) float64 {
 	var out float64 = 20
 
 	if requestsPerSecond == 0 {
 		info, err := client.NewExchangeInfoService().Do(context.Background())
 		if err == nil {
-			requestsPerSecond = float64(getRequestsPerSecondFromInfo(info))
+			requestsPerSecond = float64(getRequestsPerSecondFromInfo(*info))
 		}
 	}
 
@@ -60,7 +60,7 @@ func getRequestsPerSecondFromClient(client *binance.Client, weight int) float64 
 	return out
 }
 
-func beforeRequest(client *binance.Client, request request) {
+func beforeRequest(client binance.Client, request request) {
 	elapsed := time.Since(lastRequest)
 	rps := getRequestsPerSecondFromClient(client, weight[request])
 	if elapsed.Seconds() < (float64(1) / rps) {

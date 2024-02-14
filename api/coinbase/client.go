@@ -22,7 +22,7 @@ import (
 type Client struct {
 	apiKey     string
 	apiSecret  string
-	httpClient *http.Client
+	httpClient http.Client
 }
 
 func format(path string) string {
@@ -33,8 +33,8 @@ func format(path string) string {
 	}
 }
 
-func (self *Client) do(request *http.Request) ([]byte, error) {
-	response, err := self.httpClient.Do(request)
+func (self *Client) do(request http.Request) ([]byte, error) {
+	response, err := self.httpClient.Do(&request)
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +86,7 @@ func (self *Client) get(path string, values *url.Values) ([]byte, error) {
 	}
 	request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
 
-	return self.do(request)
+	return self.do(*request)
 }
 
 func (self *Client) post(path string, body []byte) ([]byte, error) {
@@ -122,7 +122,7 @@ func (self *Client) post(path string, body []byte) ([]byte, error) {
 	}
 	request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
 
-	return self.do(request)
+	return self.do(*request)
 }
 
 func New() (*Client, error) {
@@ -139,7 +139,7 @@ func New() (*Client, error) {
 	return &Client{
 		apiKey,
 		apiSecret,
-		&http.Client{
+		http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}, nil

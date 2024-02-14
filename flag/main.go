@@ -33,7 +33,7 @@ func exists(name string) bool {
 	return false
 }
 
-func GetFloat64(cmd *cobra.Command, name string) (float64, error) {
+func GetFloat64(cmd cobra.Command, name string) (float64, error) {
 	out, err := cmd.Flags().GetFloat64(name)
 	if out == 0 && err == nil {
 		err = fmt.Errorf("--%s cannot be zero", name)
@@ -41,7 +41,7 @@ func GetFloat64(cmd *cobra.Command, name string) (float64, error) {
 	return out, err
 }
 
-func GetString(cmd *cobra.Command, name string) (string, error) {
+func GetString(cmd cobra.Command, name string) (string, error) {
 	out, err := cmd.Flags().GetString(name)
 	if out == "" && err == nil {
 		err = fmt.Errorf("--%s cannot be empty", name)

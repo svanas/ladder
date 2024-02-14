@@ -19,25 +19,25 @@ func init() {
 
 	cancelCommand.Flags().String(consts.FLAG_SIDE, "", "\"buy\" or \"sell\"")
 
-	rootCommand.AddCommand(cancelCommand)
+	rootCommand.AddCommand(&cancelCommand)
 }
 
-var cancelCommand = &cobra.Command{
+var cancelCommand = cobra.Command{
 	Use:   "cancel",
 	Short: "cancel your open orders",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		asset, err := flag.GetString(cmd, consts.FLAG_ASSET)
+		asset, err := flag.GetString(*cmd, consts.FLAG_ASSET)
 		if err != nil {
 			return err
 		}
 
-		quote, err := flag.GetString(cmd, consts.FLAG_QUOTE)
+		quote, err := flag.GetString(*cmd, consts.FLAG_QUOTE)
 		if err != nil {
 			return err
 		}
 
 		exc, err := func() (exchange.Exchange, error) {
-			exc, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
+			exc, err := flag.GetString(*cmd, consts.FLAG_EXCHANGE)
 			if err != nil {
 				return nil, err
 			}
@@ -48,7 +48,7 @@ var cancelCommand = &cobra.Command{
 		}
 
 		side, err := func() (consts.OrderSide, error) {
-			side, err := flag.GetString(cmd, consts.FLAG_SIDE)
+			side, err := flag.GetString(*cmd, consts.FLAG_SIDE)
 			if err != nil {
 				return consts.NONE, err
 			} else if side == "buy" {

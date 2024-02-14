@@ -35,6 +35,6 @@ func S2F(s string) (*big.Float, error) {
 	return f, nil
 }
 
-func F2S(f *big.Float, prec int) string {
+func F2S(f big.Float, prec int) string {
 	return f.Text('f', prec)
 }
