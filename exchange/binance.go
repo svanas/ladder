@@ -48,7 +48,7 @@ func (self *Binance) Info() *info {
 	return self.info
 }
 
-func (self *Binance) Order(market string, side consts.OrderSide, size, price *big.Float) error {
+func (self *Binance) Order(market string, side consts.OrderSide, size, price big.Float) error {
 	client, err := binance.ReadWrite()
 	if err != nil {
 		return err

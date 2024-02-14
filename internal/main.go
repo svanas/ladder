@@ -37,7 +37,7 @@ func SimulateBuy(start_at_price, stop_at_price, start_with_size, mult float64, s
 }
 
 // compute every order
-func Orders(start_at_price, stop_at_price, start_with_size, mult float64, steps int, prec *exchange.Precision) (result []exchange.Order) {
+func Orders(start_at_price, stop_at_price, start_with_size, mult float64, steps int, prec exchange.Precision) (result []exchange.Order) {
 	// this is the very 1st order we will always make
 	current_price := start_at_price
 	current_size := start_with_size
@@ -58,7 +58,7 @@ func Orders(start_at_price, stop_at_price, start_with_size, mult float64, steps 
 }
 
 // print every order to standard output
-func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, mult float64, steps int, prec *exchange.Precision) {
+func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, mult float64, steps int, prec exchange.Precision) {
 	tbl := table.NewWriter()
 	tbl.AppendHeader(table.Row{"", "Price", "Size", "Value"})
 

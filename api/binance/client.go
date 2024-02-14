@@ -25,7 +25,7 @@ func New(apiKey, apiSecret string) (*Client, error) {
 	}
 
 	if server_time_offset == 0 {
-		beforeRequest(client, serverTime)
+		beforeRequest(*client, serverTime)
 		defer afterRequest()
 		offset, err := client.NewSetServerTimeService().Do(context.Background())
 		if err != nil {

@@ -19,7 +19,7 @@ type Client struct {
 	baseURL    string
 	ChainId    int64
 	privateKey []byte
-	httpClient *http.Client
+	httpClient http.Client
 }
 
 func (client *Client) ecdsaPrivateKey() (*ecdsa.PrivateKey, error) {
@@ -40,8 +40,8 @@ func (client *Client) PublicAddress() (string, error) {
 	return crypto.PubkeyToAddress(ecdsaPrivateKey.PublicKey).Hex(), nil
 }
 
-func (client *Client) do(request *http.Request) ([]byte, error) {
-	response, err := client.httpClient.Do(request)
+func (client *Client) do(request http.Request) ([]byte, error) {
+	response, err := client.httpClient.Do(&request)
 	if err != nil {
 		return nil, err
 	}
@@ -72,7 +72,7 @@ func (client *Client) get(path string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	return client.do(request)
+	return client.do(*request)
 }
 
 func (client *Client) post(path string, body []byte) ([]byte, error) {
@@ -88,7 +88,7 @@ func (client *Client) post(path string, body []byte) ([]byte, error) {
 	if body != nil {
 		request.Header.Add("Content-Type", "application/json")
 	}
-	return client.do(request)
+	return client.do(*request)
 }
 
 func ReadOnly() (*Client, error) {
@@ -100,7 +100,7 @@ func ReadOnly() (*Client, error) {
 		apiBase,
 		chainId,
 		nil,
-		&http.Client{
+		http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}, nil
@@ -121,7 +121,7 @@ func ReadWrite() (*Client, error) {
 		apiBase,
 		chainId,
 		privateKey,
-		&http.Client{
+		http.Client{
 			Timeout: 30 * time.Second,
 		},
 	}, nil

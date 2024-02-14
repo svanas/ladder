@@ -24,29 +24,29 @@ func init() {
 	buyCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
 	buyCommand.Flags().Bool(consts.FLAG_CANCEL, true, "cancel existing limit orders (if any)")
 
-	rootCommand.AddCommand(buyCommand)
+	rootCommand.AddCommand(&buyCommand)
 }
 
-var buyCommand = &cobra.Command{
+var buyCommand = cobra.Command{
 	Use:   "buy",
 	Short: "buy your crypto asset",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		asset, err := flag.GetString(cmd, consts.FLAG_ASSET)
+		asset, err := flag.GetString(*cmd, consts.FLAG_ASSET)
 		if err != nil {
 			return err
 		}
 
-		quote, err := flag.GetString(cmd, consts.FLAG_QUOTE)
+		quote, err := flag.GetString(*cmd, consts.FLAG_QUOTE)
 		if err != nil {
 			return err
 		}
 
-		start_at_price, err := flag.GetFloat64(cmd, consts.START_AT_PRICE)
+		start_at_price, err := flag.GetFloat64(*cmd, consts.START_AT_PRICE)
 		if err != nil {
 			return err
 		}
 
-		stop_at_price, err := flag.GetFloat64(cmd, consts.STOP_AT_PRICE)
+		stop_at_price, err := flag.GetFloat64(*cmd, consts.STOP_AT_PRICE)
 		if err != nil {
 			return err
 		}
@@ -55,17 +55,17 @@ var buyCommand = &cobra.Command{
 			stop_at_price, start_at_price = start_at_price, stop_at_price
 		}
 
-		start_with_size, err := flag.GetFloat64(cmd, consts.START_WITH_SIZE)
+		start_with_size, err := flag.GetFloat64(*cmd, consts.START_WITH_SIZE)
 		if err != nil {
 			return err
 		}
 
-		mult, err := flag.Mult(cmd)
+		mult, err := flag.Mult(*cmd)
 		if err != nil {
 			return err
 		}
 
-		size, err := flag.GetFloat64(cmd, consts.FLAG_SIZE)
+		size, err := flag.GetFloat64(*cmd, consts.FLAG_SIZE)
 		if err != nil {
 			return err
 		}
@@ -77,7 +77,7 @@ var buyCommand = &cobra.Command{
 		steps--
 
 		exc, err := func() (exchange.Exchange, error) {
-			exc, err := flag.GetString(cmd, consts.FLAG_EXCHANGE)
+			exc, err := flag.GetString(*cmd, consts.FLAG_EXCHANGE)
 			if err != nil {
 				return nil, err
 			}
@@ -129,12 +129,12 @@ var buyCommand = &cobra.Command{
 			if err != nil {
 				return err
 			}
-			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, steps, prec)
+			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, steps, *prec)
 			for _, order := range orders {
 				if order.Price < ticker {
 					yes := all
 					if !yes {
-						a := internal.Prompt(&order, func() string {
+						a := internal.Prompt(order, func() string {
 							market, _ := exc.FormatMarket(asset, quote)
 							return market
 						}())
@@ -151,7 +151,7 @@ var buyCommand = &cobra.Command{
 			}
 		}
 
-		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, steps, prec)
+		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, steps, *prec)
 
 		return nil
 	},

@@ -72,7 +72,7 @@ func (self *ParaSwap) Info() *info {
 	return self.info
 }
 
-func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price *big.Float) error {
+func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price big.Float) error {
 	client, err := paraswap.ReadWrite()
 	if err != nil {
 		return err
@@ -96,8 +96,8 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price *b
 	assetMul := new(big.Float).SetFloat64(math.Pow(10, float64(assetDec)))
 	quoteMul := new(big.Float).SetFloat64(math.Pow(10, float64(quoteDec)))
 
-	assetAmount := new(big.Float).Mul(size, assetMul)
-	quoteAmount := new(big.Float).Mul(new(big.Float).Mul(size, price), quoteMul)
+	assetAmount := new(big.Float).Mul(&size, assetMul)
+	quoteAmount := new(big.Float).Mul(new(big.Float).Mul(&size, &price), quoteMul)
 
 	maker, err := client.PublicAddress()
 	if err != nil {
@@ -113,14 +113,14 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price *b
 		case consts.BUY:
 			result.MakerAsset = web3.Checksum(quote.address)
 			result.TakerAsset = web3.Checksum(asset.address)
-			result.MakerAmount = precision.F2S(quoteAmount, 0)
-			result.TakerAmount = precision.F2S(assetAmount, 0)
+			result.MakerAmount = precision.F2S(*quoteAmount, 0)
+			result.TakerAmount = precision.F2S(*assetAmount, 0)
 			return &result, nil
 		case consts.SELL:
 			result.MakerAsset = web3.Checksum(asset.address)
 			result.TakerAsset = web3.Checksum(quote.address)
-			result.MakerAmount = precision.F2S(assetAmount, 0)
-			result.TakerAmount = precision.F2S(quoteAmount, 0)
+			result.MakerAmount = precision.F2S(*assetAmount, 0)
+			result.TakerAmount = precision.F2S(*quoteAmount, 0)
 			return &result, nil
 		}
 		return nil, fmt.Errorf("unknown order side %v", side)

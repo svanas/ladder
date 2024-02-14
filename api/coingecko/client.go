@@ -49,7 +49,7 @@ type Coin struct {
 
 type Client struct {
 	baseURL    string
-	httpClient *http.Client
+	httpClient http.Client
 	coins      []Coin
 	coin       map[string]Coin
 }
@@ -182,7 +182,7 @@ func (client *Client) GetTicker(coinId string) (float64, error) {
 func New() *Client {
 	return &Client{
 		apiBase + apiVersion,
-		&http.Client{
+		http.Client{
 			Timeout: 30 * time.Second,
 		},
 		nil,

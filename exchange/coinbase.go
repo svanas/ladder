@@ -46,7 +46,7 @@ func (self *Coinbase) Info() *info {
 	return self.info
 }
 
-func (self *Coinbase) Order(market string, side consts.OrderSide, size, price *big.Float) error {
+func (self *Coinbase) Order(market string, side consts.OrderSide, size, price big.Float) error {
 	client, err := coinbase.New()
 	if err != nil {
 		return err

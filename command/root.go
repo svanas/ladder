@@ -13,7 +13,7 @@ func init() {
 	rootCommand.CompletionOptions.HiddenDefaultCmd = true
 }
 
-var rootCommand = &cobra.Command{
+var rootCommand = cobra.Command{
 	Use:   "ladder",
 	Short: "incremental buying or selling of any crypto asset",
 }

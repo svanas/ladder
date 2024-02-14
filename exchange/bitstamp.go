@@ -49,7 +49,7 @@ func (self *Bitstamp) Info() *info {
 	return self.info
 }
 
-func (self *Bitstamp) Order(market string, side consts.OrderSide, size, price *big.Float) error {
+func (self *Bitstamp) Order(market string, side consts.OrderSide, size, price big.Float) error {
 	client, err := bitstamp.ReadWrite()
 	if err != nil {
 		return err
