@@ -3,7 +3,9 @@ package oneinch
 import (
 	_ "embed"
 	"encoding/hex"
+	"errors"
 	"fmt"
+
 	"github.com/ethereum/go-ethereum/crypto"
 	oneinch "github.com/svanas/1inch-sdk/golang/client"
 	"github.com/svanas/ladder/api/web3"
@@ -20,6 +22,10 @@ type Client struct {
 var apiKey string
 
 func (client *Client) oneInchConfig() (*oneinch.Config, error) {
+	if apiKey == "" {
+		return nil, errors.New("please generate yourself an API key on portal.1inch.dev then paste your API key in 1inch.api.key and recompile")
+	}
+
 	config := oneinch.Config{DevPortalApiKey: apiKey}
 
 	for _, chainId := range web3.Chains {
