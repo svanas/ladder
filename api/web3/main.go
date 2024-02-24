@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
+	"errors"
 	"fmt"
 	"math/big"
 
@@ -37,6 +38,10 @@ const (
 var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Fantom, Base, Arbitrum, Avalanche}
 
 func Endpoint(chainId int64) (string, error) {
+	if apiKey == "" {
+		return "", errors.New("please generate yourself an API key on infura.io then paste your API key in infura.api.key and recompile")
+	}
+
 	switch chainId {
 	case Ethereum:
 		return fmt.Sprintf("https://mainnet.infura.io/v3/%s", apiKey), nil
@@ -55,7 +60,8 @@ func Endpoint(chainId int64) (string, error) {
 	case Avalanche:
 		return fmt.Sprintf("https://avalanche-mainnet.infura.io/v3/%s", apiKey), nil
 	}
-	return "", fmt.Errorf("chain %d does not exist", chainId)
+
+	return "", fmt.Errorf("chain %d is not supported at this time", chainId)
 }
 
 func Checksum(address string) string {

@@ -34,5 +34,5 @@ func chainName(chainId int64) (string, error) {
 	case web3.Avalanche:
 		return "avalanche", nil
 	}
-	return "", fmt.Errorf("chain %d does not exist", chainId)
+	return "", fmt.Errorf("chain %d is not supported at this time", chainId)
 }

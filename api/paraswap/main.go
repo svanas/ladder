@@ -29,5 +29,5 @@ func router(chainId int64) (string, error) {
 	case web3.Avalanche:
 		return "0x34302c4267d0da0a8c65510282cc22e9e39df51f", nil
 	}
-	return "", fmt.Errorf("chain %d does not exist", chainId)
+	return "", fmt.Errorf("chain %d is not supported at this time", chainId)
 }
