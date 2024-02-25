@@ -8,6 +8,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.5.3
 	github.com/spf13/cobra v1.8.0
 	github.com/svanas/1inch-sdk/golang v0.0.0-20240222122256-893bd19c13ac
+	golang.org/x/term v0.17.0
 )
 
 require (
@@ -42,7 +43,7 @@ require (
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/sync v0.5.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
+	golang.org/x/sys v0.17.0 // indirect
 	golang.org/x/tools v0.15.0 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
