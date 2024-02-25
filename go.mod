@@ -1,13 +1,13 @@
 module github.com/svanas/ladder
 
-go 1.19
+go 1.21.1
 
 require (
+	github.com/1inch/1inch-sdk/golang v0.0.0-20240225154819-217fbb8b921d
 	github.com/adshao/go-binance/v2 v2.4.5
 	github.com/ethereum/go-ethereum v1.13.11
 	github.com/jedib0t/go-pretty/v6 v6.5.3
 	github.com/spf13/cobra v1.8.0
-	github.com/svanas/1inch-sdk/golang v0.0.0-20240222122256-893bd19c13ac
 )
 
 require (

@@ -7,7 +7,7 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/svanas/1inch-sdk/golang/client/orderbook"
+	"github.com/1inch/1inch-sdk/golang/client/orderbook"
 	"github.com/svanas/ladder/api/coingecko"
 	"github.com/svanas/ladder/api/oneinch"
 	"github.com/svanas/ladder/api/web3"
@@ -105,11 +105,12 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price big
 
 	params, err := func() (*orderbook.CreateOrderParams, error) {
 		result := orderbook.CreateOrderParams{
-			ChainId:      int(client.ChainId),
-			PrivateKey:   privateKey,
-			Maker:        web3.Checksum(maker),
-			Taker:        "0x0000000000000000000000000000000000000000",
-			SkipWarnings: true,
+			ChainId:                int(client.ChainId),
+			PrivateKey:             privateKey,
+			Maker:                  web3.Checksum(maker),
+			Taker:                  "0x0000000000000000000000000000000000000000",
+			SkipWarnings:           true,
+			FailIfApprovalIsNeeded: true,
 		}
 		switch side {
 		case consts.BUY:

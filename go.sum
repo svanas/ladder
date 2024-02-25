@@ -1,3 +1,5 @@
+github.com/1inch/1inch-sdk/golang v0.0.0-20240225154819-217fbb8b921d h1:g0l0pK3/RIZiIec24gk6i28VutCnRf7IiWONACS7z7k=
+github.com/1inch/1inch-sdk/golang v0.0.0-20240225154819-217fbb8b921d/go.mod h1:/ibWjP6boLX7MKDKSbbYBGDwW68QIb7eA5H4JvYVCTY=
 github.com/DataDog/zstd v1.4.5 h1:EndNeuB0l9syBZhut0wns3gV1hL8zX8LIu6ZiVHWLIQ=
 github.com/Microsoft/go-winio v0.6.1 h1:9/kr64B9VUZrLm5YYwbGtUJnMgqWVOdUAXu6Migciow=
 github.com/Microsoft/go-winio v0.6.1/go.mod h1:LRdKpFKfdobln8UmuiYcKPot9D2v6svN5+sAH+4kjUM=

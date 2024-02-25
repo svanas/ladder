@@ -2,15 +2,11 @@ package oneinch
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
 	"fmt"
 	"math/big"
 	"net/http"
 
-	"github.com/svanas/1inch-sdk/golang/client/orderbook"
-	"github.com/svanas/1inch-sdk/golang/helpers/consts/contracts"
-	"github.com/svanas/ladder/api/web3"
+	"github.com/1inch/1inch-sdk/golang/client/orderbook"
 )
 
 func GetMakerAmount(order orderbook.OrderResponse) (*big.Int, error) {
@@ -68,45 +64,6 @@ func (client *Client) GetOrders(owner string) ([]orderbook.OrderResponse, error)
 }
 
 func (client *Client) PlaceOrder(params orderbook.CreateOrderParams) error {
-	if err := params.Validate(); err != nil {
-		return err
-	}
-
-	// get the allowance, exit early when the 1inch router hasn't been approved
-	web3, err := web3.New(int64(params.ChainId))
-	if err != nil {
-		return err
-	}
-	router, err := contracts.Get1inchRouterFromChainId(params.ChainId)
-	if err != nil {
-		return err
-	}
-	allowance, err := web3.GetAllowance(params.MakerAsset, params.Maker, router)
-	if err != nil {
-		return err
-	}
-	makerAmount, ok := new(big.Int).SetString(params.MakingAmount, 10)
-	if !ok {
-		return fmt.Errorf("cannot convert %s to big.Int", params.MakingAmount)
-	}
-	if allowance.Cmp(makerAmount) < 0 {
-		return fmt.Errorf("please approve %s on https://app.1inch.io/#/%d/advanced/limit-order", func() string {
-			if symbol, err := web3.GetSymbol(params.MakerAsset); err == nil && symbol != "" {
-				return symbol
-			}
-			return params.MakerAsset
-		}(), params.ChainId)
-	}
-
-	// from params to limit order
-	order, err := orderbook.CreateLimitOrderMessage(params, []string{"0x", "0x", "0x", "0x", "0x"})
-	if err != nil {
-		return err
-	}
-	body, err := json.Marshal(order)
-	if err != nil {
-		return err
-	}
 
 	// post the limit order
 	oneInchClient, err := client.oneInchClient()
@@ -115,17 +72,16 @@ func (client *Client) PlaceOrder(params orderbook.CreateOrderParams) error {
 	}
 	beforeRequest()
 	defer afterRequest()
-	request, err := oneInchClient.NewRequest("POST", fmt.Sprintf("/orderbook/v3.0/%d", params.ChainId), body)
-	if err != nil {
-		return err
-	}
-	var response orderbook.CreateOrderResponse
-	if _, err := oneInchClient.Do(context.Background(), request, &response); err != nil {
-		return err
-	}
-	if !response.Success {
-		return errors.New("an unknown error occured. your limit order did not get saved")
-	}
 
+	_, _, err = oneInchClient.Orderbook.CreateOrder(context.Background(), params)
+	if err != nil {
+		if err.Error() == "1inch router does not have approval for this token" {
+			return fmt.Errorf("please approve %s on https://app.1inch.io/#/%d/advanced/limit-order", func() string {
+				return params.MakerAsset
+			}(), params.ChainId)
+		} else {
+			return err
+		}
+	}
 	return nil
 }
