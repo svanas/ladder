@@ -55,7 +55,17 @@ func ApiKey() (string, error) {
 
 // --api-secret=YYY
 func ApiSecret() (string, error) {
-	return getString(consts.FLAG_API_SECRET)
+	if str := get(consts.FLAG_API_SECRET); str != "" {
+		return str, nil
+	}
+	buf, err := prompt("API secret")
+	if err != nil {
+		return "", err
+	}
+	if buf == nil {
+		return "", fmt.Errorf("--%s is empty", consts.FLAG_API_SECRET)
+	}
+	return string(buf), nil
 }
 
 // --chain-id=[1..2147483647]
@@ -71,9 +81,15 @@ func ChainId() (int64, error) {
 
 // --private-key=['0'..'9', 'A'..'F']
 func PrivateKey() ([]byte, error) {
-	value, err := getString(consts.FLAG_PRIVATE_KEY)
+	if str := get(consts.FLAG_PRIVATE_KEY); str != "" {
+		return hex.DecodeString(str)
+	}
+	buf, err := prompt("private key")
 	if err != nil {
 		return nil, err
 	}
-	return hex.DecodeString(value)
+	if len(buf) == 0 {
+		return nil, fmt.Errorf("--%s is empty", consts.FLAG_PRIVATE_KEY)
+	}
+	return buf, nil
 }
