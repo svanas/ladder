@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 	"net/http"
+	"strings"
 
 	"github.com/1inch/1inch-sdk/golang/client/orderbook"
 )
@@ -75,7 +76,7 @@ func (client *Client) PlaceOrder(params orderbook.CreateOrderParams) error {
 
 	_, _, err = oneInchClient.Orderbook.CreateOrder(context.Background(), params)
 	if err != nil {
-		if err.Error() == "1inch router does not have approval for this token" {
+		if strings.Contains(err.Error(), "1inch router does not have approval for this token") {
 			return fmt.Errorf("please approve %s on https://app.1inch.io/#/%d/advanced/limit-order", func() string {
 				return params.MakerAsset
 			}(), params.ChainId)
