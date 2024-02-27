@@ -2,10 +2,10 @@
 package exchange
 
 import (
-	"errors"
 	"math/big"
 	"strings"
 
+	"github.com/svanas/ladder/api/kraken"
 	consts "github.com/svanas/ladder/constants"
 )
 
@@ -13,32 +13,33 @@ type Kraken struct {
 	*info
 }
 
-func (self *Kraken) Cancel(market string, side consts.OrderSide) error {
-	// client, err := coinbase.New()
-	// if err != nil {
-	// 	return err
-	// }
+func (_ *Kraken) Cancel(market string, side consts.OrderSide) error {
+	client, err := kraken.ReadWrite()
+	if err != nil {
+		return err
+	}
 
-	// orders, err := client.GetOpenOrders(market, side)
-	// if err != nil {
-	// 	return err
-	// }
+	orders, err := client.OpenOrders(market)
+	if err != nil {
+		return err
+	}
 
-	// var orderIds []string
-	// for _, order := range orders {
-	// 	orderIds = append(orderIds, order.OrderId)
-	// }
+	for _, order := range orders {
+		if side.Equals(order.Order.Description.Type) && order.Order.Description.OrderType == "limit" {
+			if err := client.CancelOrder(order.TxId); err != nil {
+				return err
+			}
+		}
+	}
 
-	// return client.CancelOrders(orderIds)
-
-	return errors.New("not implemented")
+	return nil
 }
 
-func (self *Kraken) FormatSymbol(asset string) (string, error) {
+func (_ *Kraken) FormatSymbol(asset string) (string, error) {
 	return strings.ToUpper(asset), nil
 }
 
-func (self *Kraken) FormatMarket(asset, quote string) (string, error) {
+func (_ *Kraken) FormatMarket(asset, quote string) (string, error) {
 	return strings.ToUpper(asset + quote), nil
 }
 
@@ -46,80 +47,68 @@ func (self *Kraken) Info() *info {
 	return self.info
 }
 
-func (self *Kraken) Order(market string, side consts.OrderSide, size, price big.Float) error {
-	// client, err := coinbase.New()
-	// if err != nil {
-	// 	return err
-	// }
-	// if _, err := client.CreateOrder(market, side, func() float64 {
-	// 	out, _ := size.Float64()
-	// 	return out
-	// }(), func() float64 {
-	// 	out, _ := price.Float64()
-	// 	return out
-	// }()); err != nil {
-	// 	return err
-	// }
-	// return nil
-
-	return errors.New("not implemented")
+func (_ *Kraken) Order(market string, side consts.OrderSide, size, price big.Float) error {
+	client, err := kraken.ReadWrite()
+	if err != nil {
+		return err
+	}
+	if _, err := client.CreateOrder(market, side, func() float64 {
+		out, _ := size.Float64()
+		return out
+	}(), func() float64 {
+		out, _ := price.Float64()
+		return out
+	}()); err != nil {
+		return err
+	}
+	return nil
 }
 
-func (self *Kraken) Orders(market string, side consts.OrderSide) ([]Order, error) {
-	// client, err := coinbase.New()
-	// if err != nil {
-	// 	return nil, err
-	// }
+func (_ *Kraken) Orders(market string, side consts.OrderSide) ([]Order, error) {
+	client, err := kraken.ReadWrite()
+	if err != nil {
+		return nil, err
+	}
 
-	// orders, err := client.GetOpenOrders(market, side)
-	// if err != nil {
-	// 	return nil, err
-	// }
+	orders, err := client.OpenOrders(market)
+	if err != nil {
+		return nil, err
+	}
 
-	// var output []Order
-	// for _, order := range orders {
-	// 	if order.Configuration.Limit.Size > 0 && order.Configuration.Limit.Price > 0 {
-	// 		output = append(output, Order{
-	// 			Size:  order.Configuration.Limit.Size,
-	// 			Price: order.Configuration.Limit.Price,
-	// 		})
-	// 	}
-	// }
+	var output []Order
+	for _, order := range orders {
+		if side.Equals(order.Order.Description.Type) && order.Order.Description.OrderType == "limit" && order.Order.Description.Price > 0 && order.Order.Volume > 0 {
+			output = append(output, Order{
+				Size:  order.Order.Volume,
+				Price: order.Order.Description.Price,
+			})
+		}
+	}
 
-	// return output, nil
-
-	return nil, errors.New("not implemented")
+	return output, nil
 }
 
-func (self *Kraken) Precision(market string) (*Precision, error) {
-	// client, err := coinbase.New()
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// product, err := client.GetProduct(market)
-	// if err != nil {
-	// 	return nil, err
-	// }
-	// return &Precision{
-	// 	Price: precision.Parse(product.QuoteIncrement),
-	// 	Size:  precision.Parse(product.BaseIncrement),
-	// }, nil
-
-	return nil, errors.New("not implemented")
+func (_ *Kraken) Precision(market string) (*Precision, error) {
+	client, err := kraken.ReadOnly()
+	if err != nil {
+		return nil, err
+	}
+	info, err := client.PairInfo(market)
+	if err != nil {
+		return nil, err
+	}
+	return &Precision{
+		Price: info.PairDecimals,
+		Size:  info.CostDecimals,
+	}, nil
 }
 
-func (self *Kraken) Ticker(market string) (float64, error) {
-	// client, err := coinbase.New()
-	// if err != nil {
-	// 	return 0, err
-	// }
-	// product, err := client.GetProduct(market)
-	// if err != nil {
-	// 	return 0, err
-	// }
-	// return strconv.ParseFloat(product.Price, 64)
-
-	return 0, errors.New("not implemented")
+func (_ *Kraken) Ticker(market string) (float64, error) {
+	client, err := kraken.ReadOnly()
+	if err != nil {
+		return 0, err
+	}
+	return client.Ticker(market)
 }
 
 func newKraken() Exchange {
