@@ -125,8 +125,8 @@ github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UV
 github.com/stretchr/testify v1.8.4 h1:CcVxjf3Q8PM0mHUKJCdn+eZZtm5yQwehR5yeSVQQcUk=
 github.com/supranational/blst v0.3.11 h1:LyU6FolezeWAhvQk0k6O/d49jqgO52MSDDfYgbeoEm4=
 github.com/supranational/blst v0.3.11/go.mod h1:jZJtfjgudtNl4en1tzwPIV3KjUnQUvG3/j+w+fVonLw=
-github.com/svanas/1inch-sdk/golang v0.0.0-20240222122256-893bd19c13ac h1:bym+AIHdz4npqQbHy2+TeT6feflWXZXWpgl2YE9lCoo=
-github.com/svanas/1inch-sdk/golang v0.0.0-20240222122256-893bd19c13ac/go.mod h1:pOf1lCN4Oj8N/FArGnWacwskfREWcbgYl+LsD/j7q8Y=
+github.com/svanas/1inch-sdk/golang v0.0.0-20240227160923-038b6774fb57 h1:NqGeiQgSUXPSsmlrUNjmXMjyPIb73YByE3si/mGNfOM=
+github.com/svanas/1inch-sdk/golang v0.0.0-20240227160923-038b6774fb57/go.mod h1:pOf1lCN4Oj8N/FArGnWacwskfREWcbgYl+LsD/j7q8Y=
 github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e h1:R5v5xqJB8zXKIQJwFS1BEVAMA9yOrpDmjLj3TsFaU8Q=
 github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e/go.mod h1:6mFZbBXNm7vZ7IevqF5O63fZ/vjD3/ihzI25pIEgcJA=
 github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 h1:epCh84lMvA70Z7CTTCmYQn2CKbY8j86K7/FAIr141uY=

@@ -7,7 +7,7 @@ require (
 	github.com/ethereum/go-ethereum v1.13.13
 	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/spf13/cobra v1.8.0
-	github.com/svanas/1inch-sdk/golang v0.0.0-20240222122256-893bd19c13ac
+	github.com/svanas/1inch-sdk/golang v0.0.0-20240227160923-038b6774fb57
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
 	golang.org/x/term v0.17.0
 )
