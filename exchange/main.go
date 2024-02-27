@@ -54,6 +54,7 @@ func init() {
 	exchanges = append(exchanges, newBitstamp())
 	exchanges = append(exchanges, newBinance())
 	exchanges = append(exchanges, newParaSwap())
+	exchanges = append(exchanges, newKraken())
 }
 
 func FindByName(name string) (Exchange, error) {
@@ -62,5 +63,5 @@ func FindByName(name string) (Exchange, error) {
 			return exchange, nil
 		}
 	}
-	return nil, fmt.Errorf("exchange %v does not exist", name)
+	return nil, fmt.Errorf("exchange %v is not supported at this time", name)
 }

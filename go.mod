@@ -4,9 +4,10 @@ go 1.19
 
 require (
 	github.com/adshao/go-binance/v2 v2.4.5
-	github.com/ethereum/go-ethereum v1.13.11
-	github.com/jedib0t/go-pretty/v6 v6.5.3
+	github.com/ethereum/go-ethereum v1.13.13
+	github.com/jedib0t/go-pretty/v6 v6.5.4
 	github.com/spf13/cobra v1.8.0
+	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
 	golang.org/x/term v0.17.0
 )
 
