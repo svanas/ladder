@@ -16,8 +16,7 @@ import (
 )
 
 type ParaSwap struct {
-	*info
-	coingecko *coingecko.Client
+	*dex
 }
 
 func (self *ParaSwap) Cancel(market string, side consts.OrderSide) error {
@@ -36,36 +35,11 @@ func (self *ParaSwap) FormatSymbol(asset string) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	_, sym, _, err := self.coingecko.GetCoin(asset, client.ChainId)
-	if err != nil {
-		return "", err
-	}
-	return strings.ToUpper(sym), nil
+	return self.formatSymbol(client.ChainId, asset)
 }
 
 func (self *ParaSwap) FormatMarket(asset, quote string) (string, error) {
-	return strings.ToUpper(fmt.Sprintf("%s-%s", asset, quote)), nil
-}
-
-type coin struct {
-	id      string // coingecko coin id
-	address string // on-chain token address
-}
-
-func (self *ParaSwap) parseMarket(chainId int64, market string) (*coin, *coin, error) { // --> (asset, quote, error)
-	symbols := strings.Split(market, "-")
-	if len(symbols) > 1 {
-		assetId, _, assetAddr, err := self.coingecko.GetCoin(symbols[0], chainId)
-		if err != nil {
-			return nil, nil, err
-		}
-		quoteId, _, quoteAddr, err := self.coingecko.GetCoin(symbols[1], chainId)
-		if err != nil {
-			return nil, nil, err
-		}
-		return &coin{assetId, assetAddr}, &coin{quoteId, quoteAddr}, nil
-	}
-	return nil, nil, fmt.Errorf("market %s does not exist", market)
+	return self.formatMarket(asset, quote)
 }
 
 func (self *ParaSwap) Info() *info {
@@ -202,22 +176,7 @@ func (self *ParaSwap) Precision(market string) (*Precision, error) {
 	if err != nil {
 		return nil, err
 	}
-	asset, quote, err := self.parseMarket(client.ChainId, market)
-	if err != nil {
-		return nil, err
-	}
-	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
-	if err != nil {
-		return nil, err
-	}
-	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
-	if err != nil {
-		return nil, err
-	}
-	return &Precision{
-		Price: quoteDec,
-		Size:  assetDec,
-	}, nil
+	return self.precision(client.ChainId, market)
 }
 
 func (self *ParaSwap) Ticker(market string) (float64, error) {
@@ -225,27 +184,17 @@ func (self *ParaSwap) Ticker(market string) (float64, error) {
 	if err != nil {
 		return 0, err
 	}
-	asset, quote, err := self.parseMarket(client.ChainId, market)
-	if err != nil {
-		return 0, err
-	}
-	assetLast, err := self.coingecko.GetTicker(asset.id)
-	if err != nil {
-		return 0, err
-	}
-	quoteLast, err := self.coingecko.GetTicker(quote.id)
-	if err != nil {
-		return 0, err
-	}
-	return assetLast / quoteLast, nil
+	return self.ticker(client.ChainId, market)
 }
 
 func newParaSwap() Exchange {
 	return &ParaSwap{
-		info: &info{
-			code: "PSP",
-			name: "ParaSwap",
+		dex: &dex{
+			info: &info{
+				code: "PSP",
+				name: "ParaSwap",
+			},
+			coingecko: coingecko.New(),
 		},
-		coingecko: coingecko.New(),
 	}
 }

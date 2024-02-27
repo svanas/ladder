@@ -35,7 +35,9 @@ const (
 	Avalanche         int64 = 43114
 )
 
-func endpoint(chainId int64) (string, error) {
+var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Fantom, Base, Arbitrum, Avalanche}
+
+func Endpoint(chainId int64) (string, error) {
 	if apiKey == "" {
 		return "", errors.New("please generate yourself an API key on infura.io then paste your API key in infura.api.key and recompile")
 	}
@@ -67,7 +69,7 @@ func Checksum(address string) string {
 }
 
 func New(chainId int64) (*Client, error) {
-	url, err := endpoint(chainId)
+	url, err := Endpoint(chainId)
 	if err != nil {
 		return nil, err
 	}
