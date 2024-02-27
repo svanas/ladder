@@ -27,6 +27,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Coinbase](https://www.coinbase.com)
 * [Bitstamp](https://www.bitstamp.net)
 * [Binance](https://www.binance.com)
+* [Kraken](https://www.kraken.com)
 * [ParaSwap](https://www.paraswap.io)
 * [1inch](https://1inch.io)
 
