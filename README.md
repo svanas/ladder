@@ -1,6 +1,6 @@
 # Ladder
 
-Incremental buying or selling of any crypto asset.
+Ladder is crypto trading software that will incrementally buy or sell any crypto asset (rather than opting for a single price).
 
 ## reason to be
 
@@ -94,7 +94,7 @@ Usage: `./ladder cancel [flags]`
 
 1. Download and install [Go version 1.19](https://go.dev) (or later)
 2. Navigate to [Infura](https://www.infura.io) and generate yourself an API key
-3. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key) and paste your [Infura](https://www.infura.io) API key
+3. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key) and paste your Infura API key
 4. Navigate to the [1inch dev portal](https://portal.1inch.dev) and generate yourself an API key
 5. Open [1inch.api.key](https://github.com/svanas/ladder/blob/main/api/oneinch/1inch.api.key) and paste your [1inch](https://1inch.io) API key
 6. Should you decide to fork this repo, then do not commit your API keys. Your API keys are not to be shared.
