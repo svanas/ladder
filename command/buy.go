@@ -17,12 +17,12 @@ func init() {
 	buyCommand.Flags().Float64(consts.STOP_AT_PRICE, 0, "price where you will want to stop buying")
 	buyCommand.Flags().Float64(consts.START_WITH_SIZE, 0, "size of your first buy order (in quote asset)")
 
-	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.05, "multiplier that defines the distance between your orders")
+	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.05, "multiplier that defines the number of orders and the distance between them")
 	buyCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to buy (in quote asset)")
 
 	buyCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
 	buyCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
-	buyCommand.Flags().Bool(consts.FLAG_CANCEL, true, "cancel existing limit orders (if any)")
+	buyCommand.Flags().Bool(consts.FLAG_CANCEL, true, "cancel existing limit orders, if any")
 
 	rootCommand.AddCommand(&buyCommand)
 }
