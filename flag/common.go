@@ -91,5 +91,5 @@ func PrivateKey() ([]byte, error) {
 	if len(buf) == 0 {
 		return nil, fmt.Errorf("--%s is empty", consts.FLAG_PRIVATE_KEY)
 	}
-	return buf, nil
+	return hex.DecodeString(string(buf))
 }
