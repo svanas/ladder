@@ -1,14 +1,16 @@
 package oneinch
 
 import (
-	_ "embed"
-	"encoding/hex"
+	"bytes"
+	"crypto/ecdsa"
+	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
+	"net/http"
+	"time"
 
 	"github.com/ethereum/go-ethereum/crypto"
-	oneinch "github.com/svanas/1inch-sdk/golang/client"
-	"github.com/svanas/ladder/api/web3"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/flag"
 )
@@ -16,45 +18,73 @@ import (
 type Client struct {
 	ChainId    int64
 	privateKey []byte
+	httpClient http.Client
 }
 
-//go:embed 1inch.api.key
-var apiKey string
+func (client *Client) do(request http.Request) ([]byte, error) {
+	beforeRequest()
+	defer afterRequest()
 
-func (client *Client) oneInchConfig() (*oneinch.Config, error) {
-	if apiKey == "" {
-		return nil, errors.New("please generate yourself an API key on portal.1inch.dev then paste your API key in 1inch.api.key and recompile")
-	}
+	request.Header.Set("Authorization", fmt.Sprintf("Bearer %s", apiKey))
 
-	config := oneinch.Config{DevPortalApiKey: apiKey}
-
-	for _, chainId := range web3.Chains {
-		endpoint, err := web3.Endpoint(chainId)
-		if err != nil {
-			return nil, err
-		}
-		config.Web3HttpProviders = append(config.Web3HttpProviders, oneinch.Web3ProviderConfig{ChainId: int(chainId), Url: endpoint})
-	}
-
-	return &config, nil
-}
-
-func (client *Client) oneInchClient() (*oneinch.Client, error) {
-	config, err := client.oneInchConfig()
+	response, err := client.httpClient.Do(&request)
 	if err != nil {
 		return nil, err
 	}
-	return oneinch.NewClient(*config)
-}
+	defer response.Body.Close()
 
-func (client *Client) PrivateKey() (string, error) {
-	if client.privateKey == nil {
-		return "", fmt.Errorf("--%s cannot be empty", consts.FLAG_PRIVATE_KEY)
+	body, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
 	}
-	return hex.EncodeToString(client.privateKey), nil
+
+	if response.StatusCode < 200 || response.StatusCode >= 400 {
+		type Error struct {
+			Message string `json:"error"`
+		}
+		var error Error
+		if json.Unmarshal(body, &error) == nil {
+			return nil, errors.New(error.Message)
+		} else {
+			return nil, errors.New(response.Status)
+		}
+	}
+
+	return body, nil
 }
 
-func (client *Client) PublicAddress() (string, error) {
+func (client *Client) get(path string) ([]byte, error) {
+	request, err := http.NewRequest("GET", (apiURL + path), nil)
+	if err != nil {
+		return nil, err
+	}
+	return client.do(*request)
+}
+
+func (client *Client) post(path string, body []byte) ([]byte, error) {
+	request, err := http.NewRequest("POST", (apiURL + path), func() io.Reader {
+		if body != nil {
+			return bytes.NewReader(body)
+		}
+		return nil
+	}())
+	if err != nil {
+		return nil, err
+	}
+	if body != nil {
+		request.Header.Add("Content-Type", "application/json")
+	}
+	return client.do(*request)
+}
+
+func (client *Client) ecdsaPrivateKey() (*ecdsa.PrivateKey, error) {
+	if client.privateKey == nil {
+		return nil, fmt.Errorf("--%s cannot be empty", consts.FLAG_PRIVATE_KEY)
+	}
+	return crypto.ToECDSA(client.privateKey)
+}
+
+func (client *Client) publicAddress() (string, error) {
 	if client.privateKey == nil {
 		return "", fmt.Errorf("--%s cannot be empty", consts.FLAG_PRIVATE_KEY)
 	}
@@ -73,6 +103,9 @@ func ReadOnly() (*Client, error) {
 	return &Client{
 		chainId,
 		nil,
+		http.Client{
+			Timeout: 30 * time.Second,
+		},
 	}, nil
 }
 
@@ -90,5 +123,8 @@ func ReadWrite() (*Client, error) {
 	return &Client{
 		chainId,
 		privateKey,
+		http.Client{
+			Timeout: 30 * time.Second,
+		},
 	}, nil
 }

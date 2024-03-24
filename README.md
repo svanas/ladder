@@ -29,7 +29,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Binance](https://www.binance.com)
 * [Kraken](https://www.kraken.com)
 * [ParaSwap](https://www.paraswap.io)
-* [1inch](https://1inch.io)
+* [1inch v3](https://1inch.io) (we are working on v4)
 
 ## who is paying for gas?
 

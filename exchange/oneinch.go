@@ -7,7 +7,6 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/svanas/1inch-sdk/golang/client/orderbook"
 	"github.com/svanas/ladder/api/coingecko"
 	"github.com/svanas/ladder/api/oneinch"
 	"github.com/svanas/ladder/api/web3"
@@ -93,46 +92,15 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price big
 	assetAmount := new(big.Float).Mul(&size, assetMul)
 	quoteAmount := new(big.Float).Mul(new(big.Float).Mul(&size, &price), quoteMul)
 
-	privateKey, err := client.PrivateKey()
-	if err != nil {
-		return err
-	}
-
-	maker, err := client.PublicAddress()
-	if err != nil {
-		return err
-	}
-
-	params, err := func() (*orderbook.CreateOrderParams, error) {
-		result := orderbook.CreateOrderParams{
-			ChainId:                int(client.ChainId),
-			PrivateKey:             privateKey,
-			Maker:                  web3.Checksum(maker),
-			Taker:                  "0x0000000000000000000000000000000000000000",
-			SkipWarnings:           true,
-			FailIfApprovalIsNeeded: true,
-		}
+	return func() error {
 		switch side {
 		case consts.BUY:
-			result.MakerAsset = web3.Checksum(quote.address)
-			result.TakerAsset = web3.Checksum(asset.address)
-			result.MakingAmount = precision.F2S(*quoteAmount, 0)
-			result.TakingAmount = precision.F2S(*assetAmount, 0)
-			return &result, nil
+			return client.PlaceOrder(web3.Checksum(quote.address), web3.Checksum(asset.address), *quoteAmount, *assetAmount)
 		case consts.SELL:
-			result.MakerAsset = web3.Checksum(asset.address)
-			result.TakerAsset = web3.Checksum(quote.address)
-			result.MakingAmount = precision.F2S(*assetAmount, 0)
-			result.TakingAmount = precision.F2S(*quoteAmount, 0)
-			return &result, nil
+			return client.PlaceOrder(web3.Checksum(asset.address), web3.Checksum(quote.address), *assetAmount, *quoteAmount)
 		}
-		return nil, fmt.Errorf("unknown order side %v", side)
+		return fmt.Errorf("unknown order side %v", side)
 	}()
-	if err != nil {
-		return err
-	}
-
-	return client.PlaceOrder(*params)
 }
 
 func (self *OneInch) Orders(market string, side consts.OrderSide) ([]Order, error) {
@@ -159,22 +127,17 @@ func (self *OneInch) Orders(market string, side consts.OrderSide) ([]Order, erro
 	assetDiv := new(big.Float).SetFloat64(math.Pow(10, float64(assetDec)))
 	quoteDiv := new(big.Float).SetFloat64(math.Pow(10, float64(quoteDec)))
 
-	owner, err := client.PublicAddress()
-	if err != nil {
-		return nil, err
-	}
-
-	orders, err := client.GetOrders(owner)
+	orders, err := client.GetOrders()
 	if err != nil {
 		return nil, err
 	}
 	var result []Order
 	for _, order := range orders {
-		makerScaled, err := oneinch.GetMakerAmount(order)
+		makerScaled, err := order.Data.GetMakerAmount()
 		if err != nil {
 			return nil, err
 		}
-		takerScaled, err := oneinch.GetTakerAmount(order)
+		takerScaled, err := order.Data.GetTakerAmount()
 		if err != nil {
 			return nil, err
 		}
