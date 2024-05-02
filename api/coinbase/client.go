@@ -4,12 +4,17 @@ package coinbase
 import (
 	"bytes"
 	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
+	"crypto/x509"
 	"encoding/hex"
 	"encoding/json"
+	"encoding/pem"
 	"errors"
 	"fmt"
 	"io"
+	"math"
+	"math/big"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -17,6 +22,8 @@ import (
 	"time"
 
 	"github.com/svanas/ladder/flag"
+	"gopkg.in/square/go-jose.v2"
+	"gopkg.in/square/go-jose.v2/jwt"
 )
 
 type Client struct {
@@ -25,12 +32,80 @@ type Client struct {
 	httpClient http.Client
 }
 
+type nonceSource struct{}
+
+func (n nonceSource) Nonce() (string, error) {
+	r, err := rand.Int(rand.Reader, big.NewInt(math.MaxInt64))
+	if err != nil {
+		return "", err
+	}
+	return r.String(), nil
+}
+
 func format(path string) string {
 	if strings.HasPrefix(path, "/api") {
 		return path
 	} else {
 		return fmt.Sprintf("/api/%s/brokerage/%s", apiVersion, path)
 	}
+}
+
+func (self *Client) auth(request *http.Request, method, path, body string) error {
+	if strings.HasPrefix(self.apiKey, "organizations/") {
+		// (coinbase developer platform) JWT key
+		block, _ := pem.Decode([]byte(strings.Replace(self.apiSecret, "\\n", "\n", -1)))
+		if block == nil {
+			return errors.New("could not decode private key, you might need to enclose it in double quote characters")
+		}
+
+		key, err := x509.ParseECPrivateKey(block.Bytes)
+		if err != nil {
+			return err
+		}
+
+		sig, err := jose.NewSigner(
+			jose.SigningKey{Algorithm: jose.ES256, Key: key},
+			(&jose.SignerOptions{NonceSource: nonceSource{}}).WithType("JWT").WithHeader("kid", self.apiKey),
+		)
+		if err != nil {
+			return err
+		}
+
+		type apiKeyClaims struct {
+			*jwt.Claims
+			URI string `json:"uri"`
+		}
+
+		claims := &apiKeyClaims{
+			Claims: &jwt.Claims{
+				Subject:   self.apiKey,
+				Issuer:    "coinbase-cloud",
+				NotBefore: jwt.NewNumericDate(time.Now()),
+				Expiry:    jwt.NewNumericDate(time.Now().Add(2 * time.Minute)),
+			},
+			URI: fmt.Sprintf("%s %s%s", method, "api.coinbase.com", format(path)),
+		}
+
+		bearer, err := jwt.Signed(sig).Claims(claims).CompactSerialize()
+		if err != nil {
+			return err
+		}
+		request.Header.Add("Authorization", fmt.Sprintf("Bearer %s", bearer))
+	} else {
+		// legacy API key
+		nonce := strconv.FormatInt((time.Now().UTC().Unix()), 10)
+
+		request.Header.Add("CB-ACCESS-KEY", self.apiKey)
+		request.Header.Add("CB-ACCESS-TIMESTAMP", nonce)
+
+		mac := hmac.New(sha256.New, []byte(self.apiSecret))
+		if _, err := mac.Write([]byte(nonce + method + format(path) + body)); err != nil {
+			return err
+		}
+		request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
+	}
+
+	return nil
 }
 
 func (self *Client) do(request http.Request) ([]byte, error) {
@@ -75,16 +150,9 @@ func (self *Client) get(path string, values *url.Values) ([]byte, error) {
 		return nil, err
 	}
 
-	nonce := strconv.FormatInt((time.Now().UTC().Unix()), 10)
-
-	request.Header.Add("CB-ACCESS-KEY", self.apiKey)
-	request.Header.Add("CB-ACCESS-TIMESTAMP", nonce)
-
-	mac := hmac.New(sha256.New, []byte(self.apiSecret))
-	if _, err := mac.Write([]byte(nonce + "GET" + format(path))); err != nil {
+	if err := self.auth(request, "GET", path, ""); err != nil {
 		return nil, err
 	}
-	request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
 
 	return self.do(*request)
 }
@@ -106,21 +174,14 @@ func (self *Client) post(path string, body []byte) ([]byte, error) {
 		request.Header.Add("Content-Type", "application/json")
 	}
 
-	nonce := strconv.FormatInt((time.Now().UTC().Unix()), 10)
-
-	request.Header.Add("CB-ACCESS-KEY", self.apiKey)
-	request.Header.Add("CB-ACCESS-TIMESTAMP", nonce)
-
-	mac := hmac.New(sha256.New, []byte(self.apiSecret))
-	if _, err := mac.Write([]byte(nonce + "POST" + format(path) + func() string {
+	if err := self.auth(request, "POST", path, func() string {
 		if body != nil {
 			return string(body)
 		}
 		return ""
-	}())); err != nil {
+	}()); err != nil {
 		return nil, err
 	}
-	request.Header.Add("CB-ACCESS-SIGN", hex.EncodeToString(mac.Sum(nil)))
 
 	return self.do(*request)
 }

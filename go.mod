@@ -9,6 +9,7 @@ require (
 	github.com/spf13/cobra v1.8.0
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
 	golang.org/x/term v0.17.0
+	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
 require (
