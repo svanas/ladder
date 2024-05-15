@@ -92,12 +92,13 @@ Usage: `./ladder cancel [flags]`
 
 ## compiling
 
-1. Download and install [Go version 1.19](https://go.dev) (or later)
+1. Download and install [Go version 1.21](https://go.dev) (or later)
 2. Navigate to [Infura](https://www.infura.io) and generate yourself an API key
 3. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key) and paste your Infura API key
 4. Navigate to the [1inch dev portal](https://portal.1inch.dev) and generate yourself an API key
 5. Open [1inch.api.key](https://github.com/svanas/ladder/blob/main/api/oneinch/1inch.api.key) and paste your [1inch](https://1inch.io) API key
-6. Should you decide to fork this repo, then do not commit your API keys. Your API keys are not to be shared.
+6. Open a terminal in the directory you cloned this repo, and execute `go build` on the command-line
+7. Should you decide to fork this repo, then do not commit your API keys. Your API keys are not to be shared.
 
 ## support
 
