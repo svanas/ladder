@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"reflect"
 	"strings"
 	"time"
@@ -54,11 +55,13 @@ type Client struct {
 	coin       map[string]Coin
 }
 
-func (client *Client) get(path string) ([]byte, error) {
+func (client *Client) get(path string, args url.Values) ([]byte, error) {
 	beforeRequest()
 	defer afterRequest()
 
-	response, err := client.httpClient.Get(client.baseURL + path)
+	args.Add("x_cg_demo_api_key", apiKey)
+
+	response, err := client.httpClient.Get(client.baseURL + path + "?" + args.Encode())
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +97,9 @@ func (client *Client) get(path string) ([]byte, error) {
 
 func (client *Client) getCoins() ([]Coin, error) {
 	if len(client.coins) == 0 {
-		body, err := client.get("coins/list?include_platform=true")
+		args := url.Values{}
+		args.Add("include_platform", "true")
+		body, err := client.get("coins/list", args)
 		if err != nil {
 			return nil, err
 		}
@@ -135,7 +140,7 @@ func (client *Client) getCoin(coinId string) (*Coin, error) {
 	if ok {
 		return &coin, nil
 	}
-	body, err := client.get("coins/" + coinId)
+	body, err := client.get("coins/"+coinId, url.Values{})
 	if err != nil {
 		return nil, err
 	}

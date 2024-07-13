@@ -1,6 +1,7 @@
 package coingecko
 
 import (
+	_ "embed"
 	"fmt"
 
 	"github.com/svanas/ladder/api/web3"
@@ -11,8 +12,11 @@ const (
 	apiVersion = "v3/"
 )
 
+//go:embed coingecko.api.key
+var apiKey string
+
 func apiRequestsPerSecond() float64 {
-	return float64(5) / float64(60) // 5 req/minute
+	return float64(30) / float64(60) // 30 req/minute
 }
 
 func chainName(chainId int64) (string, error) {
