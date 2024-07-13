@@ -41,6 +41,9 @@ func (client *Client) PublicAddress() (string, error) {
 }
 
 func (client *Client) do(request http.Request) ([]byte, error) {
+	beforeRequest()
+	defer afterRequest()
+
 	response, err := client.httpClient.Do(&request)
 	if err != nil {
 		return nil, err
