@@ -4,11 +4,11 @@ go 1.21
 
 require (
 	github.com/adshao/go-binance/v2 v2.6.0
-	github.com/ethereum/go-ethereum v1.14.7
+	github.com/ethereum/go-ethereum v1.14.8
 	github.com/jedib0t/go-pretty/v6 v6.5.9
 	github.com/spf13/cobra v1.8.1
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
-	golang.org/x/term v0.22.0
+	golang.org/x/term v0.23.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
@@ -17,7 +17,7 @@ require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/bitly/go-simplejson v0.5.0 // indirect
 	github.com/bits-and-blooms/bitset v1.10.0 // indirect
-	github.com/btcsuite/btcd/btcec/v2 v2.2.0 // indirect
+	github.com/btcsuite/btcd/btcec/v2 v2.3.4 // indirect
 	github.com/consensys/bavard v0.1.13 // indirect
 	github.com/consensys/gnark-crypto v0.12.1 // indirect
 	github.com/crate-crypto/go-kzg-4844 v1.0.0 // indirect
@@ -26,7 +26,7 @@ require (
 	github.com/ethereum/c-kzg-4844 v1.0.0 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
 	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/holiman/uint256 v1.3.0 // indirect
+	github.com/holiman/uint256 v1.3.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/mattn/go-runewidth v0.0.15 // indirect
@@ -42,6 +42,6 @@ require (
 	golang.org/x/crypto v0.22.0 // indirect
 	golang.org/x/exp v0.0.0-20231110203233-9a3e6036ecaa // indirect
 	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
+	golang.org/x/sys v0.23.0 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
