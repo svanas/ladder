@@ -56,7 +56,7 @@ func (self *Bitstamp) Order(market string, side consts.OrderSide, size, price bi
 	}
 
 	s, _ := size.Float64()
-	p, _ := size.Float64()
+	p, _ := price.Float64()
 
 	if _, err := func() (*bitstamp.Order, error) {
 		if side == consts.BUY {

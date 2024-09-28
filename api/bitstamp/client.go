@@ -39,6 +39,8 @@ func (self *Client) reason(body []byte) error {
 				if all, ok := reason2["__all__"]; ok {
 					msg := fmt.Sprintf("%v", all)
 					if msg != "" && msg != "[]" {
+						msg = strings.TrimPrefix(msg, "[")
+						msg = strings.TrimSuffix(msg, "]")
 						return errors.New(msg)
 					}
 				}
