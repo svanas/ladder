@@ -29,7 +29,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Binance](https://www.binance.com)
 * [Kraken](https://www.kraken.com)
 * [ParaSwap](https://www.paraswap.io)
-* [1inch v3](https://1inch.io) (we are working on v4)
+* [1inch](https://1inch.io)
 
 ## who is paying for gas?
 
@@ -92,7 +92,7 @@ Usage: `./ladder cancel [flags]`
 
 ## compiling
 
-1. Download and install [Go version 1.21](https://go.dev) (or later)
+1. Download and install [Go version 1.23](https://go.dev) (or later)
 2. Navigate to [Infura](https://www.infura.io) and generate yourself an API key
 3. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key) and paste your Infura API key
 4. Navigate to [CoinGecko](https://www.coingecko.com/en/developers/dashboard) and generate yourself an API key
