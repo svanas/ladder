@@ -83,7 +83,7 @@ func (client *Client) GetOrdersV4() ([]OrderV4, error) {
 	return output, nil
 }
 
-func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, takerAmount big.Float) error {
+func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, takerAmount big.Float, nonce big.Int) error {
 	const taker = "0x0000000000000000000000000000000000000000"
 	maker, err := client.publicAddress()
 	if err != nil {
@@ -116,7 +116,7 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 		Receiver:     taker,
 		MakingAmount: precision.F2S(makerAmount, 0),
 		TakingAmount: precision.F2S(takerAmount, 0),
-		MakerTraits:  "0",
+		MakerTraits:  newMakerTraits(nonce).encode(),
 		Extension:    "0",
 	}
 

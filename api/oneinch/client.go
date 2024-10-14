@@ -7,9 +7,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/big"
 	"net/http"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/flag"
@@ -93,6 +95,14 @@ func (client *Client) publicAddress() (string, error) {
 		return "", err
 	}
 	return crypto.PubkeyToAddress(ecdsaPrivateKey.PublicKey).Hex(), nil
+}
+
+func (client *Client) GetSeriesNonce() (*big.Int, error) {
+	public, err := client.publicAddress()
+	if err != nil {
+		return big.NewInt(0), err
+	}
+	return getSeriesNonce(client.ChainId, common.HexToAddress(public))
 }
 
 func ReadOnly() (*Client, error) {

@@ -65,7 +65,21 @@ func (self *OneInch) Info() *info {
 	return self.info
 }
 
-func (self *OneInch) Order(market string, side consts.OrderSide, size, price big.Float) error {
+func (self *OneInch) Nonce() (*big.Int, error) {
+	client, err := oneinch.ReadWrite()
+	if err != nil {
+		return big.NewInt(0), err
+	}
+
+	nonce, err := client.GetSeriesNonce()
+	if err != nil {
+		return big.NewInt(0), err
+	}
+
+	return nonce, nil
+}
+
+func (self *OneInch) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int) error {
 	client, err := oneinch.ReadWrite()
 	if err != nil {
 		return err
@@ -95,9 +109,9 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price big
 	return func() error {
 		switch side {
 		case consts.BUY:
-			return client.PlaceOrderV4(web3.Checksum(quote.address), web3.Checksum(asset.address), *quoteAmount, *assetAmount)
+			return client.PlaceOrderV4(web3.Checksum(quote.address), web3.Checksum(asset.address), *quoteAmount, *assetAmount, nonce)
 		case consts.SELL:
-			return client.PlaceOrderV4(web3.Checksum(asset.address), web3.Checksum(quote.address), *assetAmount, *quoteAmount)
+			return client.PlaceOrderV4(web3.Checksum(asset.address), web3.Checksum(quote.address), *assetAmount, *quoteAmount, nonce)
 		}
 		return fmt.Errorf("unknown order side %v", side)
 	}()
