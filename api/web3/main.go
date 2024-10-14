@@ -80,7 +80,7 @@ func New(chainId int64) (*Client, error) {
 	return &Client{client}, nil
 }
 
-func (client *Client) call(msg ethereum.CallMsg, blockNumber *big.Int) ([]byte, error) {
+func (client *Client) Call(msg ethereum.CallMsg, blockNumber *big.Int) ([]byte, error) {
 	return client.client.CallContract(context.Background(), msg, blockNumber)
 }
 
@@ -95,7 +95,7 @@ func (client *Client) getSymbol(contract common.Address) (string, error) {
 	}
 
 	// query the chain
-	response, err := client.call(ethereum.CallMsg{
+	response, err := client.Call(ethereum.CallMsg{
 		To:   &contract,
 		Data: parsed.Methods["symbol"].ID,
 	}, nil)
@@ -132,7 +132,7 @@ func (client *Client) getAllowance(contract, owner, spender common.Address) (*bi
 	}
 
 	// query the chain
-	response, err := client.call(ethereum.CallMsg{
+	response, err := client.Call(ethereum.CallMsg{
 		To:   &contract,
 		Data: data,
 	}, nil)
