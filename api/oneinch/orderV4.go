@@ -1,6 +1,7 @@
 package oneinch
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -14,15 +15,14 @@ import (
 )
 
 type OrderDataV4 struct {
-	Salt         string `json:"salt"`
-	MakerAsset   string `json:"makerAsset"`
-	TakerAsset   string `json:"takerAsset"`
-	Maker        string `json:"maker"`
-	Receiver     string `json:"receiver"`
-	MakingAmount string `json:"makingAmount"`
-	TakingAmount string `json:"takingAmount"`
-	MakerTraits  string `json:"makerTraits"`
-	Extension    string `json:"extension"`
+	Salt         string `json:"salt"`         // the highest 96 bits represent salt, and the lowest 160 bit represent extension hash.
+	MakerAsset   string `json:"makerAsset"`   // the maker’s asset address.
+	TakerAsset   string `json:"takerAsset"`   // the taker’s asset address.
+	Maker        string `json:"maker"`        // the maker’s address
+	Receiver     string `json:"receiver"`     // the receiver’s address. the taker assets will be transferred to this address.
+	MakingAmount string `json:"makingAmount"` // the amount of tokens maker will give
+	TakingAmount string `json:"takingAmount"` // the amount of tokens maker wants to receive
+	MakerTraits  string `json:"makerTraits"`  // limit order options, coded as bit flags into uint256 number.
 }
 
 func (order *OrderDataV4) GetMakerAmount() (*big.Int, error) {
@@ -108,16 +108,32 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 		}(), client.ChainId)
 	}
 
+	// compute the salt. the highest 96 bits represent the salt, and the lowest 160 bits are supposed to be zero
+	salt, err := func() (*big.Int, error) {
+		// define the maximum value (2^96 - 1)
+		max := new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 96), big.NewInt(1))
+		// generate a random big.Int within the range [0, 2^96 - 1]
+		salt, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			return nil, err
+		}
+		// shift the big.Int left by 160 bits to set the lowest 160 bits to zero
+		salt.Lsh(salt, 160)
+		return salt, nil
+	}()
+	if err != nil {
+		return err
+	}
+
 	orderData := OrderDataV4{
-		Salt:         fmt.Sprintf("%d", (time.Now().UnixNano() / int64(time.Millisecond))),
+		Salt:         salt.String(),
 		MakerAsset:   makerAsset,
 		TakerAsset:   takerAsset,
 		Maker:        maker,
 		Receiver:     taker,
 		MakingAmount: precision.F2S(makerAmount, 0),
 		TakingAmount: precision.F2S(takerAmount, 0),
-		MakerTraits:  newMakerTraits(nonce).encode(),
-		Extension:    "0",
+		MakerTraits:  newMakerTraits(nonce, time.Now().Add(time.Hour).Unix()).encode(),
 	}
 
 	// construct the ERC-712 message
@@ -138,7 +154,6 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 				{Name: "makingAmount", Type: "uint256"},
 				{Name: "takingAmount", Type: "uint256"},
 				{Name: "makerTraits", Type: "uint256"},
-				{Name: "extension", Type: "uint256"},
 			},
 		},
 		PrimaryType: "Order",
@@ -157,7 +172,6 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 			"makingAmount": orderData.MakingAmount,
 			"takingAmount": orderData.TakingAmount,
 			"makerTraits":  orderData.MakerTraits,
-			"extension":    orderData.Extension,
 		},
 	}
 

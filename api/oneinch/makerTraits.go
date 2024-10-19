@@ -6,14 +6,14 @@ import (
 )
 
 const (
-	noPartialFillsFlag      = 255
-	allowMultipleFillsFlag  = 254
-	needPreinteractionFlag  = 252
-	needPostinteractionFlag = 251
-	needEpochCheckFlag      = 250
-	hasExtensionFlag        = 249
-	usePermit2Flag          = 248
-	unwrapWethFlag          = 247
+	noPartialFillsFlag      = 255 // if set, the order does not allow partial fills.
+	allowMultipleFillsFlag  = 254 // if set, the order permits multiple fills.
+	needPreinteractionFlag  = 252 // if set, the order requires pre-interaction call.
+	needPostinteractionFlag = 251 // if set, the order requires post-interaction call.
+	needEpochCheckFlag      = 250 // if set, an order uses epoch manager for cancelling.
+	hasExtensionFlag        = 249 // if set, the order applies extension(s) logic during fill.
+	usePermit2Flag          = 248 // if set, the order uses Uniswap Permit2.
+	unwrapWethFlag          = 247 // if set, the order requires unwrapping WETH.
 )
 
 type MakerTraits struct {
@@ -22,7 +22,6 @@ type MakerTraits struct {
 	Nonce         int64
 	Series        int64
 
-	NoPartialFills      bool
 	NeedPostinteraction bool
 	NeedPreinteraction  bool
 	NeedEpochCheck      bool
@@ -34,17 +33,16 @@ type MakerTraits struct {
 	AllowMultipleFills bool
 }
 
-func newMakerTraits(nonce big.Int) *MakerTraits {
+func newMakerTraits(epoch big.Int, expiry int64) *MakerTraits {
 	return &MakerTraits{
 		AllowedSender: "0x0000000000000000000000000000000000000000",
-		Expiry:        0,
-		Nonce:         nonce.Int64(),
+		Expiry:        expiry,
+		Nonce:         epoch.Int64(),
 		Series:        0,
 
-		NoPartialFills:      false,
 		NeedPostinteraction: false,
 		NeedPreinteraction:  false,
-		NeedEpochCheck:      false,
+		NeedEpochCheck:      true,
 		HasExtension:        false,
 		ShouldUsePermit2:    false,
 		ShouldUnwrapWeth:    false,
@@ -58,7 +56,7 @@ func (mt *MakerTraits) encode() string {
 	encodedCalldata := new(big.Int)
 
 	tmp := new(big.Int)
-	// Limit Orders require this flag to always be present
+	// limit orders require this flag to always be present
 	if mt.AllowMultipleFills {
 		encodedCalldata.Or(encodedCalldata, tmp.Lsh(big.NewInt(1), allowMultipleFillsFlag))
 	}

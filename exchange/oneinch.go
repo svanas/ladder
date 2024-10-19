@@ -71,7 +71,7 @@ func (self *OneInch) Nonce() (*big.Int, error) {
 		return big.NewInt(0), err
 	}
 
-	nonce, err := client.GetSeriesNonce()
+	nonce, err := client.GetEpoch()
 	if err != nil {
 		return big.NewInt(0), err
 	}
