@@ -23,6 +23,7 @@ type OrderDataV4 struct {
 	MakingAmount string `json:"makingAmount"` // the amount of tokens maker will give
 	TakingAmount string `json:"takingAmount"` // the amount of tokens maker wants to receive
 	MakerTraits  string `json:"makerTraits"`  // limit order options, coded as bit flags into uint256 number.
+	Extension    string `json:"extension"`    // extensions are features that consume more gas to execute, but are not always necessary for a limit order.
 }
 
 func (order *OrderDataV4) GetMakerAmount() (*big.Int, error) {
@@ -108,7 +109,7 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 		}(), client.ChainId)
 	}
 
-	// compute the salt. the highest 96 bits represent the salt, and the lowest 160 bits are supposed to be zero
+	// compute the salt. the highest 96 bits represent salt, and the lowest 160 bit represent extension hash
 	salt, err := func() (*big.Int, error) {
 		// define the maximum value (2^96 - 1)
 		max := new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 96), big.NewInt(1))
@@ -134,6 +135,7 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 		MakingAmount: precision.F2S(makerAmount, 0),
 		TakingAmount: precision.F2S(takerAmount, 0),
 		MakerTraits:  newMakerTraits(nonce, time.Now().Add(time.Hour).Unix()).encode(),
+		Extension:    "0x",
 	}
 
 	// construct the ERC-712 message
