@@ -11,15 +11,16 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/svanas/ladder/api/web3"
+	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
 )
 
 type OrderDataV4 struct {
 	Salt         string `json:"salt"`         // the highest 96 bits represent salt, and the lowest 160 bit represent extension hash.
-	MakerAsset   string `json:"makerAsset"`   // the maker’s asset address.
-	TakerAsset   string `json:"takerAsset"`   // the taker’s asset address.
 	Maker        string `json:"maker"`        // the maker’s address
 	Receiver     string `json:"receiver"`     // the receiver’s address. the taker assets will be transferred to this address.
+	MakerAsset   string `json:"makerAsset"`   // the maker’s asset address.
+	TakerAsset   string `json:"takerAsset"`   // the taker’s asset address.
 	MakingAmount string `json:"makingAmount"` // the amount of tokens maker will give
 	TakingAmount string `json:"takingAmount"` // the amount of tokens maker wants to receive
 	MakerTraits  string `json:"makerTraits"`  // limit order options, coded as bit flags into uint256 number.
@@ -128,13 +129,13 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 
 	orderData := OrderDataV4{
 		Salt:         salt.String(),
-		MakerAsset:   makerAsset,
-		TakerAsset:   takerAsset,
 		Maker:        maker,
 		Receiver:     taker,
+		MakerAsset:   makerAsset,
+		TakerAsset:   takerAsset,
 		MakingAmount: precision.F2S(makerAmount, 0),
 		TakingAmount: precision.F2S(takerAmount, 0),
-		MakerTraits:  newMakerTraits(nonce, time.Now().Add(time.Hour).Unix()).encode(),
+		MakerTraits:  newMakerTraits(nonce, time.Now().Add(consts.THREE_YEARS).Unix()).encode(),
 		Extension:    "0x",
 	}
 
@@ -149,10 +150,10 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 			},
 			"Order": []apitypes.Type{
 				{Name: "salt", Type: "uint256"},
-				{Name: "makerAsset", Type: "address"},
-				{Name: "takerAsset", Type: "address"},
 				{Name: "maker", Type: "address"},
 				{Name: "receiver", Type: "address"},
+				{Name: "makerAsset", Type: "address"},
+				{Name: "takerAsset", Type: "address"},
 				{Name: "makingAmount", Type: "uint256"},
 				{Name: "takingAmount", Type: "uint256"},
 				{Name: "makerTraits", Type: "uint256"},
@@ -167,10 +168,10 @@ func (client *Client) PlaceOrderV4(makerAsset, takerAsset string, makerAmount, t
 		},
 		Message: apitypes.TypedDataMessage{
 			"salt":         orderData.Salt,
-			"makerAsset":   orderData.MakerAsset,
-			"takerAsset":   orderData.TakerAsset,
 			"maker":        orderData.Maker,
 			"receiver":     orderData.Receiver,
+			"makerAsset":   orderData.MakerAsset,
+			"takerAsset":   orderData.TakerAsset,
 			"makingAmount": orderData.MakingAmount,
 			"takingAmount": orderData.TakingAmount,
 			"makerTraits":  orderData.MakerTraits,
