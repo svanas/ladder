@@ -1,5 +1,7 @@
 package constants
 
+import "time"
+
 const (
 	FLAG_API_KEY     = "api-key"
 	FLAG_API_SECRET  = "api-secret"
@@ -16,4 +18,10 @@ const (
 	FLAG_CHAIN_ID    = "chain-id"
 	FLAG_PRIVATE_KEY = "private-key"
 	FLAG_CANCEL      = "cancel"
+)
+
+const (
+	ONE_YEAR    = 365 * 24 * time.Hour
+	TWO_YEARS   = ONE_YEAR * 2
+	THREE_YEARS = ONE_YEAR * 3
 )

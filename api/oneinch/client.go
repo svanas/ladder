@@ -7,9 +7,12 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math/big"
 	"net/http"
+	"strings"
 	"time"
 
+	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/flag"
@@ -40,11 +43,25 @@ func (client *Client) do(request http.Request) ([]byte, error) {
 
 	if response.StatusCode < 200 || response.StatusCode >= 400 {
 		type Error struct {
-			Message string `json:"error"`
+			Error   string `json:"error"`
+			Message string `json:"message"`
 		}
 		var error Error
 		if json.Unmarshal(body, &error) == nil {
-			return nil, errors.New(error.Message)
+			return nil, errors.New(func() string {
+				msg := strings.TrimSpace(error.Error)
+				if error.Message != "" {
+					if msg != "" {
+						if !strings.HasSuffix(msg, ".") {
+							msg += ". "
+						} else {
+							msg += " "
+						}
+					}
+					msg += error.Message
+				}
+				return msg
+			}())
 		} else {
 			return nil, errors.New(response.Status)
 		}
@@ -93,6 +110,14 @@ func (client *Client) publicAddress() (string, error) {
 		return "", err
 	}
 	return crypto.PubkeyToAddress(ecdsaPrivateKey.PublicKey).Hex(), nil
+}
+
+func (client *Client) GetEpoch() (*big.Int, error) {
+	public, err := client.publicAddress()
+	if err != nil {
+		return big.NewInt(0), err
+	}
+	return getEpoch(client.ChainId, common.HexToAddress(public))
 }
 
 func ReadOnly() (*Client, error) {
