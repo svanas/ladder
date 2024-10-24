@@ -109,9 +109,9 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price big
 	return func() error {
 		switch side {
 		case consts.BUY:
-			return client.PlaceOrderV4(web3.Checksum(quote.address), web3.Checksum(asset.address), *quoteAmount, *assetAmount, nonce)
+			return client.PlaceOrder(web3.Checksum(quote.address), web3.Checksum(asset.address), *quoteAmount, *assetAmount, nonce)
 		case consts.SELL:
-			return client.PlaceOrderV4(web3.Checksum(asset.address), web3.Checksum(quote.address), *assetAmount, *quoteAmount, nonce)
+			return client.PlaceOrder(web3.Checksum(asset.address), web3.Checksum(quote.address), *assetAmount, *quoteAmount, nonce)
 		}
 		return fmt.Errorf("unknown order side %v", side)
 	}()
@@ -141,7 +141,7 @@ func (self *OneInch) Orders(market string, side consts.OrderSide) ([]Order, erro
 	assetDiv := new(big.Float).SetFloat64(math.Pow(10, float64(assetDec)))
 	quoteDiv := new(big.Float).SetFloat64(math.Pow(10, float64(quoteDec)))
 
-	orders, err := client.GetOrdersV4()
+	orders, err := client.GetOrders()
 	if err != nil {
 		return nil, err
 	}

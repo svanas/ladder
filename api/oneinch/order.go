@@ -1,6 +1,7 @@
 package oneinch
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"math/big"
@@ -10,23 +11,23 @@ import (
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/svanas/ladder/api/web3"
+	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
 )
 
-type OrderDataV3 struct {
-	Salt          string `json:"salt"`
-	MakerAsset    string `json:"makerAsset"`
-	TakerAsset    string `json:"takerAsset"`
-	Maker         string `json:"maker"`
-	Receiver      string `json:"receiver"`
-	AllowedSender string `json:"allowedSender"`
-	MakingAmount  string `json:"makingAmount"`
-	TakingAmount  string `json:"takingAmount"`
-	Offsets       string `json:"offsets"`
-	Interactions  string `json:"interactions"`
+type OrderData struct {
+	Salt         string `json:"salt"`         // the highest 96 bits represent salt, and the lowest 160 bit represent extension hash.
+	Maker        string `json:"maker"`        // the maker’s address
+	Receiver     string `json:"receiver"`     // the receiver’s address. the taker assets will be transferred to this address.
+	MakerAsset   string `json:"makerAsset"`   // the maker’s asset address.
+	TakerAsset   string `json:"takerAsset"`   // the taker’s asset address.
+	MakingAmount string `json:"makingAmount"` // the amount of tokens maker will give
+	TakingAmount string `json:"takingAmount"` // the amount of tokens maker wants to receive
+	MakerTraits  string `json:"makerTraits"`  // limit order options, coded as bit flags into uint256 number.
+	Extension    string `json:"extension"`    // extensions are features that consume more gas to execute, but are not always necessary for a limit order.
 }
 
-func (order *OrderDataV3) GetMakerAmount() (*big.Int, error) {
+func (order *OrderData) GetMakerAmount() (*big.Int, error) {
 	i, ok := new(big.Int).SetString(order.MakingAmount, 10)
 	if !ok {
 		return nil, fmt.Errorf("cannot convert %s to big.Int", order.MakingAmount)
@@ -34,7 +35,7 @@ func (order *OrderDataV3) GetMakerAmount() (*big.Int, error) {
 	return i, nil
 }
 
-func (order *OrderDataV3) GetTakerAmount() (*big.Int, error) {
+func (order *OrderData) GetTakerAmount() (*big.Int, error) {
 	i, ok := new(big.Int).SetString(order.TakingAmount, 10)
 	if !ok {
 		return nil, fmt.Errorf("cannot convert %s to big.Int", order.TakingAmount)
@@ -42,13 +43,13 @@ func (order *OrderDataV3) GetTakerAmount() (*big.Int, error) {
 	return i, nil
 }
 
-type OrderV3 struct {
-	Signature string      `json:"signature"`
-	OrderHash string      `json:"orderHash"`
-	Data      OrderDataV3 `json:"data"`
+type Order struct {
+	Signature string    `json:"signature"`
+	OrderHash string    `json:"orderHash"`
+	Data      OrderData `json:"data"`
 }
 
-func (client *Client) GetOrdersV3() ([]OrderV3, error) {
+func (client *Client) GetOrders() ([]Order, error) {
 	owner, err := client.publicAddress()
 	if err != nil {
 		return nil, err
@@ -57,15 +58,15 @@ func (client *Client) GetOrdersV3() ([]OrderV3, error) {
 	var (
 		page   int = 1
 		limit  int = 100
-		output []OrderV3
+		output []Order
 	)
 	for {
-		orders, err := func() ([]OrderV3, error) {
-			body, err := client.get(fmt.Sprintf("/orderbook/v3.0/%d/address/%s?page=%d&limit=%d&sortBy=createDateTime", client.ChainId, owner, page, limit))
+		orders, err := func() ([]Order, error) {
+			body, err := client.get(fmt.Sprintf("/orderbook/v4.0/%d/address/%s?page=%d&limit=%d&sortBy=createDateTime", client.ChainId, owner, page, limit))
 			if err != nil {
 				return nil, err
 			}
-			var response []OrderV3
+			var response []Order
 			if err := json.Unmarshal(body, &response); err != nil {
 				return nil, err
 			}
@@ -84,7 +85,7 @@ func (client *Client) GetOrdersV3() ([]OrderV3, error) {
 	return output, nil
 }
 
-func (client *Client) PlaceOrderV3(makerAsset, takerAsset string, makerAmount, takerAmount big.Float) error {
+func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, takerAmount big.Float, nonce big.Int) error {
 	const taker = "0x0000000000000000000000000000000000000000"
 	maker, err := client.publicAddress()
 	if err != nil {
@@ -96,7 +97,7 @@ func (client *Client) PlaceOrderV3(makerAsset, takerAsset string, makerAmount, t
 	if err != nil {
 		return err
 	}
-	allowance, err := web3.GetAllowance(makerAsset, maker, apiRouterV3)
+	allowance, err := web3.GetAllowance(makerAsset, maker, apiRouter)
 	if err != nil {
 		return err
 	}
@@ -109,17 +110,33 @@ func (client *Client) PlaceOrderV3(makerAsset, takerAsset string, makerAmount, t
 		}(), client.ChainId)
 	}
 
-	orderData := OrderDataV3{
-		Salt:          fmt.Sprintf("%d", (time.Now().UnixNano() / int64(time.Millisecond))),
-		MakerAsset:    makerAsset,
-		TakerAsset:    takerAsset,
-		Maker:         maker,
-		Receiver:      taker,
-		AllowedSender: taker,
-		MakingAmount:  precision.F2S(makerAmount, 0),
-		TakingAmount:  precision.F2S(takerAmount, 0),
-		Offsets:       "0",
-		Interactions:  "0x",
+	// compute the salt. the highest 96 bits represent salt, and the lowest 160 bit represent extension hash
+	salt, err := func() (*big.Int, error) {
+		// define the maximum value (2^96 - 1)
+		max := new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 96), big.NewInt(1))
+		// generate a random big.Int within the range [0, 2^96 - 1]
+		salt, err := rand.Int(rand.Reader, max)
+		if err != nil {
+			return nil, err
+		}
+		// shift the big.Int left by 160 bits to set the lowest 160 bits to zero
+		salt.Lsh(salt, 160)
+		return salt, nil
+	}()
+	if err != nil {
+		return err
+	}
+
+	orderData := OrderData{
+		Salt:         salt.String(),
+		Maker:        maker,
+		Receiver:     taker,
+		MakerAsset:   makerAsset,
+		TakerAsset:   takerAsset,
+		MakingAmount: precision.F2S(makerAmount, 0),
+		TakingAmount: precision.F2S(takerAmount, 0),
+		MakerTraits:  newMakerTraits(nonce, time.Now().Add(consts.THREE_YEARS).Unix()).encode(),
+		Extension:    "0x",
 	}
 
 	// construct the ERC-712 message
@@ -133,35 +150,31 @@ func (client *Client) PlaceOrderV3(makerAsset, takerAsset string, makerAmount, t
 			},
 			"Order": []apitypes.Type{
 				{Name: "salt", Type: "uint256"},
-				{Name: "makerAsset", Type: "address"},
-				{Name: "takerAsset", Type: "address"},
 				{Name: "maker", Type: "address"},
 				{Name: "receiver", Type: "address"},
-				{Name: "allowedSender", Type: "address"},
+				{Name: "makerAsset", Type: "address"},
+				{Name: "takerAsset", Type: "address"},
 				{Name: "makingAmount", Type: "uint256"},
 				{Name: "takingAmount", Type: "uint256"},
-				{Name: "offsets", Type: "uint256"},
-				{Name: "interactions", Type: "bytes"},
+				{Name: "makerTraits", Type: "uint256"},
 			},
 		},
 		PrimaryType: "Order",
 		Domain: apitypes.TypedDataDomain{
 			Name:              "1inch Aggregation Router",
-			Version:           "5",
+			Version:           "6",
 			ChainId:           math.NewHexOrDecimal256(client.ChainId),
-			VerifyingContract: apiRouterV3,
+			VerifyingContract: apiRouter,
 		},
 		Message: apitypes.TypedDataMessage{
-			"salt":          orderData.Salt,
-			"makerAsset":    orderData.MakerAsset,
-			"takerAsset":    orderData.TakerAsset,
-			"maker":         orderData.Maker,
-			"receiver":      orderData.Receiver,
-			"allowedSender": orderData.AllowedSender,
-			"makingAmount":  orderData.MakingAmount,
-			"takingAmount":  orderData.TakingAmount,
-			"offsets":       orderData.Offsets,
-			"interactions":  []byte{},
+			"salt":         orderData.Salt,
+			"maker":        orderData.Maker,
+			"receiver":     orderData.Receiver,
+			"makerAsset":   orderData.MakerAsset,
+			"takerAsset":   orderData.TakerAsset,
+			"makingAmount": orderData.MakingAmount,
+			"takingAmount": orderData.TakingAmount,
+			"makerTraits":  orderData.MakerTraits,
 		},
 	}
 
@@ -193,7 +206,7 @@ func (client *Client) PlaceOrderV3(makerAsset, takerAsset string, makerAmount, t
 	signature[64] += 27
 
 	// construct the limit order
-	body, err := json.Marshal(&OrderV3{
+	body, err := json.Marshal(&Order{
 		OrderHash: challengeHash.Hex(),
 		Signature: fmt.Sprintf("0x%x", signature),
 		Data:      orderData,
@@ -203,7 +216,7 @@ func (client *Client) PlaceOrderV3(makerAsset, takerAsset string, makerAmount, t
 	}
 
 	// post the limit order
-	if _, err := client.post(fmt.Sprintf("/orderbook/v3.0/%d", client.ChainId), body); err != nil {
+	if _, err := client.post(fmt.Sprintf("/orderbook/v4.0/%d", client.ChainId), body); err != nil {
 		return err
 	}
 

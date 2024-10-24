@@ -12,9 +12,8 @@ import (
 )
 
 const (
-	apiURL      = "https://api.1inch.dev"
-	apiRouterV3 = "0x1111111254eeb25477b68fb85ed929f73a960582"
-	apiRouterV4 = "0x111111125421cA6dc452d289314280a0f8842A65"
+	apiURL    = "https://api.1inch.dev"
+	apiRouter = "0x111111125421cA6dc452d289314280a0f8842A65"
 )
 
 //go:embed 1inch.api.key
@@ -39,7 +38,7 @@ func getEpoch(chainId int64, maker common.Address) (*big.Int, error) {
 		return nil, err
 	}
 
-	to := common.HexToAddress(apiRouterV4)
+	to := common.HexToAddress(apiRouter)
 	response, err := web3.Call(ethereum.CallMsg{To: &to, Data: data}, nil)
 	if err != nil {
 		return nil, err
