@@ -90,11 +90,11 @@ func (self *OneInch) Order(market string, side consts.OrderSide, size, price big
 		return err
 	}
 
-	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
+	assetDec, err := asset.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return err
 	}
-	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := quote.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return err
 	}
@@ -128,11 +128,11 @@ func (self *OneInch) Orders(market string, side consts.OrderSide) ([]Order, erro
 		return nil, err
 	}
 
-	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
+	assetDec, err := asset.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
-	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := quote.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return nil, err
 	}

@@ -148,3 +148,31 @@ func (client *Client) getAllowance(contract, owner, spender common.Address) (*bi
 
 	return allowance, nil
 }
+
+func (client *Client) GetDecimals(contract string) (int, error) {
+	return client.getDecimals(common.HexToAddress(contract))
+}
+
+func (client *Client) getDecimals(contract common.Address) (int, error) {
+	parsed, err := abi.JSON(bytes.NewReader(erc20))
+	if err != nil {
+		return 0, err
+	}
+
+	// query the chain
+	response, err := client.Call(ethereum.CallMsg{
+		To:   &contract,
+		Data: parsed.Methods["decimals"].ID,
+	}, nil)
+	if err != nil {
+		return 0, err
+	}
+
+	// unpack the result
+	var decimals uint8
+	if err := parsed.UnpackIntoInterface(&decimals, "decimals", response); err != nil {
+		return 0, err
+	}
+
+	return int(decimals), nil
+}

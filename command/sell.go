@@ -135,7 +135,7 @@ var sellCommand = cobra.Command{
 			}
 			orders := internal.Orders(start_at_price, stop_at_price, start_with_size, mult, steps, *prec)
 			for _, order := range orders {
-				if order.Price > ticker {
+				if (ticker == -1) || (order.Price > ticker) {
 					yes := all
 					if !yes {
 						a := internal.Prompt(order, func() string {

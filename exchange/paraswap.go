@@ -61,11 +61,11 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price bi
 		return err
 	}
 
-	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
+	assetDec, err := asset.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return err
 	}
-	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := quote.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return err
 	}
@@ -121,11 +121,11 @@ func (self *ParaSwap) Orders(market string, side consts.OrderSide) ([]Order, err
 		return nil, err
 	}
 
-	assetDec, err := self.coingecko.GetDecimals(asset.id, client.ChainId)
+	assetDec, err := asset.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
-	quoteDec, err := self.coingecko.GetDecimals(quote.id, client.ChainId)
+	quoteDec, err := quote.getDecimals(self.coingecko, client.ChainId)
 	if err != nil {
 		return nil, err
 	}
