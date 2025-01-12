@@ -41,7 +41,7 @@ func getInt(name string) (int64, error) {
 func Mult(cmd cobra.Command) (float64, error) {
 	value, err := GetFloat64(cmd, consts.FLAG_MULT)
 	if err == nil {
-		if value < 1 || value >= 2 {
+		if value < 1 || value > 2 {
 			err = fmt.Errorf("--%s is invalid. valid values are between 1 and 2", consts.FLAG_MULT)
 		}
 	}
