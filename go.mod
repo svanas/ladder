@@ -3,7 +3,7 @@ module github.com/svanas/ladder
 go 1.23
 
 require (
-	github.com/adshao/go-binance/v2 v2.6.1
+	github.com/adshao/go-binance/v2 v2.7.1
 	github.com/ethereum/go-ethereum v1.14.12
 	github.com/jedib0t/go-pretty/v6 v6.6.2
 	github.com/spf13/cobra v1.8.1
@@ -28,13 +28,12 @@ require (
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/holiman/uint256 v1.3.1 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
+	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mmcloughlin/addchain v0.4.0 // indirect
-	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
-	github.com/modern-go/reflect2 v1.0.2 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/shirou/gopsutil v3.21.11+incompatible // indirect
+	github.com/shopspring/decimal v1.4.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/supranational/blst v0.3.13 // indirect
 	github.com/tklauser/go-sysconf v0.3.14 // indirect
