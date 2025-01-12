@@ -7,6 +7,7 @@ import (
 	"math"
 	"math/big"
 	"strings"
+	"time"
 
 	"github.com/svanas/ladder/api/coingecko"
 	"github.com/svanas/ladder/api/paraswap"
@@ -84,8 +85,9 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price bi
 
 	order, err := func() (*paraswap.Order, error) {
 		result := paraswap.Order{
-			Maker: web3.Checksum(maker),
-			Taker: "0x0000000000000000000000000000000000000000",
+			Expiry: time.Now().Add(consts.THREE_YEARS).Unix(),
+			Maker:  web3.Checksum(maker),
+			Taker:  "0x0000000000000000000000000000000000000000",
 		}
 		switch side {
 		case consts.BUY:
