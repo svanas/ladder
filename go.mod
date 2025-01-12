@@ -5,7 +5,7 @@ go 1.23
 require (
 	github.com/adshao/go-binance/v2 v2.7.1
 	github.com/ethereum/go-ethereum v1.14.12
-	github.com/jedib0t/go-pretty/v6 v6.6.2
+	github.com/jedib0t/go-pretty/v6 v6.6.5
 	github.com/spf13/cobra v1.8.1
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
 	golang.org/x/term v0.26.0
@@ -41,7 +41,8 @@ require (
 	github.com/yusufpapurcu/wmi v1.2.4 // indirect
 	golang.org/x/crypto v0.29.0 // indirect
 	golang.org/x/exp v0.0.0-20241108190413-2d47ceb2692f // indirect
-	golang.org/x/sync v0.9.0 // indirect
+	golang.org/x/sync v0.10.0 // indirect
 	golang.org/x/sys v0.27.0 // indirect
+	golang.org/x/text v0.21.0 // indirect
 	rsc.io/tmplfunc v0.0.3 // indirect
 )
