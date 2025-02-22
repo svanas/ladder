@@ -78,19 +78,28 @@ func (self *Client) CreateOrder(market string, side consts.OrderSide, size, pric
 	}
 
 	type Response struct {
-		Success bool   `json:"success"`
-		Reason  string `json:"failure_reason"`
-		OrderId string `json:"order_id"`
+		Success         bool `json:"success"`
+		SuccessResponse struct {
+			OrderId string `json:"order_id"`
+		} `json:"success_response"`
+		ErrorResponse struct {
+			Error   string `json:"error"`
+			Message string `json:"message"`
+		} `json:"error_response"`
 	}
 	var response Response
 	if err := json.Unmarshal(data, &response); err != nil {
 		return "", err
 	}
 	if !response.Success {
-		return "", errors.New(response.Reason)
+		if response.ErrorResponse.Message != "" {
+			return "", errors.New(response.ErrorResponse.Message)
+		} else {
+			return "", errors.New(response.ErrorResponse.Error)
+		}
 	}
 
-	return response.OrderId, nil
+	return response.SuccessResponse.OrderId, nil
 }
 
 func (self *Client) CancelOrders(orderIds []string) error {
