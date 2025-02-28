@@ -133,7 +133,7 @@ var buyCommand = cobra.Command{
 			if err != nil {
 				return err
 			}
-			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, size, steps, *prec)
+			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, 0, steps, *prec)
 			for _, order := range orders {
 				if (order.Price < ticker) || (ticker == -1) {
 					yes := all
@@ -155,7 +155,7 @@ var buyCommand = cobra.Command{
 			}
 		}
 
-		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, size, steps, *prec)
+		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, 0, steps, *prec)
 
 		return nil
 	},

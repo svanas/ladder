@@ -49,7 +49,7 @@ func Orders(start_at_price, stop_at_price, start_with_size, mult, size float64, 
 
 	for step := 0; step < steps; step++ {
 		// sweeping the dust from your wallet
-		if step == (steps - 1) {
+		if (size > 0) && (step == (steps - 1)) {
 			current_size = size - cumulative_size
 		}
 		cumulative_size += current_size
@@ -85,7 +85,7 @@ func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, 
 
 	for step := 0; step < steps; step++ {
 		// sweeping the dust from your wallet
-		if step == (steps - 1) {
+		if (size > 0) && (step == (steps - 1)) {
 			current_size = size - cumulative_size
 		}
 
