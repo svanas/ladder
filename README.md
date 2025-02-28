@@ -63,6 +63,8 @@ Usage: `./ladder sell [flags]`
 | --start-with-size | size of your first sell order (in base asset)                              |         |
 | --mult            | multiplier that defines the number of orders and the distance between them | 1.05    |
 | --size            | the quantity you will want to sell (in base asset)                         |         |
+| --cancel          | cancel existing limit orders, if any                                       | true    |
+| --days            | number of days your order will be valid (optional, DEX-only)               |         |
 
 ## buy
 
@@ -78,6 +80,8 @@ Usage: `./ladder buy [flags]`
 | --start-with-size | size of your first buy order (in quote asset)                              |         |
 | --mult            | multiplier that defines the number of orders and the distance between them | 1.05    |
 | --size            | the quantity you will want to buy (in quote asset)                         |         |
+| --cancel          | cancel existing limit orders, if any                                       | true    |
+| --days            | number of days your order will be valid (optional, DEX-only)               |         |
 
 ## cancel
 
