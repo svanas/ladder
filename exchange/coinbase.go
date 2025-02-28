@@ -50,7 +50,7 @@ func (self *Coinbase) Nonce() (*big.Int, error) {
 	return big.NewInt(0), nil
 }
 
-func (self *Coinbase) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int) error {
+func (self *Coinbase) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int, days int) error {
 	client, err := coinbase.New()
 	if err != nil {
 		return err

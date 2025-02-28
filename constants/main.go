@@ -18,6 +18,7 @@ const (
 	FLAG_CHAIN_ID    = "chain-id"
 	FLAG_PRIVATE_KEY = "private-key"
 	FLAG_CANCEL      = "cancel"
+	FLAG_DAYS        = "days"
 )
 
 const (

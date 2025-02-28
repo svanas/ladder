@@ -52,7 +52,7 @@ func (self *Binance) Nonce() (*big.Int, error) {
 	return big.NewInt(0), nil
 }
 
-func (self *Binance) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int) error {
+func (self *Binance) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int, days int) error {
 	client, err := binance.ReadWrite()
 	if err != nil {
 		return err

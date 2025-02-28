@@ -23,6 +23,7 @@ func init() {
 	sellCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
 	sellCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
 	sellCommand.Flags().Bool(consts.FLAG_CANCEL, true, "cancel existing limit orders, if any")
+	sellCommand.Flags().Int(consts.FLAG_DAYS, 0, "number of days your DEX order will be valid")
 
 	rootCommand.AddCommand(&sellCommand)
 }
@@ -133,6 +134,10 @@ var sellCommand = cobra.Command{
 			if err != nil {
 				return err
 			}
+			days, err := cmd.Flags().GetInt(consts.FLAG_DAYS)
+			if err != nil {
+				return err
+			}
 			orders := internal.Orders(start_at_price, stop_at_price, start_with_size, mult, size, steps, *prec)
 			for _, order := range orders {
 				if (ticker == -1) || (order.Price > ticker) {
@@ -146,7 +151,7 @@ var sellCommand = cobra.Command{
 						all = all || a == answer.YES_TO_ALL
 					}
 					if yes {
-						if err := exc.Order(market, consts.SELL, order.BigSize(), order.BigPrice(), *nonce); err != nil {
+						if err := exc.Order(market, consts.SELL, order.BigSize(), order.BigPrice(), *nonce, days); err != nil {
 							return err
 						}
 						num++

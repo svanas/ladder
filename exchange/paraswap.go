@@ -51,7 +51,7 @@ func (self *ParaSwap) Nonce() (*big.Int, error) {
 	return big.NewInt(0), nil
 }
 
-func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int) error {
+func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int, days int) error {
 	client, err := paraswap.ReadWrite()
 	if err != nil {
 		return err
@@ -83,9 +83,16 @@ func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price bi
 		return err
 	}
 
+	expiry := func() time.Duration {
+		if days > 0 {
+			return time.Duration(days) * 24 * time.Hour
+		}
+		return consts.THREE_YEARS
+	}()
+
 	order, err := func() (*paraswap.Order, error) {
 		result := paraswap.Order{
-			Expiry: time.Now().Add(consts.THREE_YEARS).Unix(),
+			Expiry: time.Now().Add(expiry).Unix(),
 			Maker:  web3.Checksum(maker),
 			Taker:  "0x0000000000000000000000000000000000000000",
 		}

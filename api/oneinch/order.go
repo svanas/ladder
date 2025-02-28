@@ -85,7 +85,7 @@ func (client *Client) GetOrders() ([]Order, error) {
 	return output, nil
 }
 
-func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, takerAmount big.Float, nonce big.Int) error {
+func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, takerAmount big.Float, nonce big.Int, days int) error {
 	const taker = "0x0000000000000000000000000000000000000000"
 	maker, err := client.publicAddress()
 	if err != nil {
@@ -127,6 +127,13 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 		return err
 	}
 
+	expiry := func() time.Duration {
+		if days > 0 {
+			return time.Duration(days) * 24 * time.Hour
+		}
+		return consts.THREE_YEARS
+	}()
+
 	orderData := OrderData{
 		Salt:         salt.String(),
 		Maker:        maker,
@@ -135,7 +142,7 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 		TakerAsset:   takerAsset,
 		MakingAmount: precision.F2S(makerAmount, 0),
 		TakingAmount: precision.F2S(takerAmount, 0),
-		MakerTraits:  newMakerTraits(nonce, time.Now().Add(consts.THREE_YEARS).Unix()).encode(),
+		MakerTraits:  newMakerTraits(nonce, time.Now().Add(expiry).Unix()).encode(),
 		Extension:    "0x",
 	}
 

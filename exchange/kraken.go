@@ -51,7 +51,7 @@ func (self *Kraken) Nonce() (*big.Int, error) {
 	return big.NewInt(0), nil
 }
 
-func (_ *Kraken) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int) error {
+func (_ *Kraken) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int, days int) error {
 	client, err := kraken.ReadWrite()
 	if err != nil {
 		return err
