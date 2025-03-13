@@ -41,8 +41,7 @@ type Exchange interface {
 	FormatSymbol(asset string) (string, error)
 	FormatMarket(asset, quote string) (string, error)
 	Info() *info
-	Nonce() (*big.Int, error)
-	Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int, days int) error
+	Order(market string, side consts.OrderSide, size, price big.Float, days int) error
 	Orders(market string, side consts.OrderSide) ([]Order, error)
 	Precision(market string) (*Precision, error)
 	Ticker(market string) (float64, error)

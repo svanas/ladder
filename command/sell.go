@@ -126,10 +126,6 @@ var sellCommand = cobra.Command{
 				all bool // yes to all
 				num int  // result
 			)
-			nonce, err := exc.Nonce()
-			if err != nil {
-				return err
-			}
 			ticker, err := exc.Ticker(market)
 			if err != nil {
 				return err
@@ -151,7 +147,7 @@ var sellCommand = cobra.Command{
 						all = all || a == answer.YES_TO_ALL
 					}
 					if yes {
-						if err := exc.Order(market, consts.SELL, order.BigSize(), order.BigPrice(), *nonce, days); err != nil {
+						if err := exc.Order(market, consts.SELL, order.BigSize(), order.BigPrice(), days); err != nil {
 							return err
 						}
 						num++

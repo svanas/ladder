@@ -47,11 +47,7 @@ func (self *ParaSwap) Info() *info {
 	return self.info
 }
 
-func (self *ParaSwap) Nonce() (*big.Int, error) {
-	return big.NewInt(0), nil
-}
-
-func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price big.Float, nonce big.Int, days int) error {
+func (self *ParaSwap) Order(market string, side consts.OrderSide, size, price big.Float, days int) error {
 	client, err := paraswap.ReadWrite()
 	if err != nil {
 		return err
