@@ -3,7 +3,7 @@ module github.com/svanas/ladder
 go 1.23.6
 
 require (
-	github.com/adshao/go-binance/v2 v2.8.0
+	github.com/adshao/go-binance/v2 v2.8.1
 	github.com/ethereum/go-ethereum v1.15.3
 	github.com/jedib0t/go-pretty/v6 v6.6.6
 	github.com/spf13/cobra v1.9.1
@@ -25,6 +25,7 @@ require (
 	github.com/ethereum/c-kzg-4844 v1.0.3 // indirect
 	github.com/ethereum/go-verkle v0.2.2 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/websocket v1.5.3 // indirect
 	github.com/holiman/uint256 v1.3.2 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
