@@ -5,7 +5,7 @@ go 1.23.6
 require (
 	github.com/adshao/go-binance/v2 v2.8.1
 	github.com/ethereum/go-ethereum v1.15.5
-	github.com/jedib0t/go-pretty/v6 v6.6.6
+	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/spf13/cobra v1.9.1
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
 	golang.org/x/term v0.29.0
