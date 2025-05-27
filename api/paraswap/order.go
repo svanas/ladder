@@ -103,7 +103,7 @@ func (client *Client) PlaceOrder(order *Order) error {
 		return err
 	}
 	if allowance.Cmp(makerAmount) < 0 {
-		return fmt.Errorf("please approve %s on https://app.paraswap.io/#/limit", func() string {
+		return fmt.Errorf("please approve %s on https://app.velora.xyz/#/limit", func() string {
 			if symbol, err := web3.GetSymbol(order.MakerAsset); err == nil && symbol != "" {
 				return symbol
 			}

@@ -28,7 +28,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Bitstamp](https://www.bitstamp.net)
 * [Binance](https://www.binance.com)
 * [Kraken](https://www.kraken.com)
-* [ParaSwap](https://www.paraswap.io)
+* [Velora](https://www.velora.xyz) (previously ParaSwap)
 * [1inch](https://1inch.io)
 
 ## who is paying for gas?
