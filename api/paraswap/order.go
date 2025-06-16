@@ -65,7 +65,7 @@ func (client *Client) GetOrders(owner string) ([]Order, error) {
 		offset  int     = 0
 	)
 	for hasMore {
-		body, err := client.get(fmt.Sprintf("ft/orders/%d/maker/%s?offset=%d", client.ChainId, owner, offset))
+		body, err := client.get(fmt.Sprintf("ft/orders/%d/maker/%s?limit=%d&offset=%d", client.ChainId, owner, 500, offset))
 		if err != nil {
 			return nil, err
 		}
