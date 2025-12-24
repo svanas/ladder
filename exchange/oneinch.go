@@ -46,7 +46,7 @@ func (self *OneInch) Cancel(market string, side consts.OrderSide) error {
 	if err != nil {
 		return err
 	}
-	return fmt.Errorf("please cancel your orders on https://app.1inch.io/#/%d/advanced/limit-order/%s/%s", client.ChainId, asset, quote)
+	return fmt.Errorf("please cancel your orders on https://1inch.com/pro?mode=limit&pair=%d:%s-%s", client.ChainId, asset, quote)
 }
 
 func (self *OneInch) FormatSymbol(asset string) (string, error) {

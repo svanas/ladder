@@ -102,12 +102,12 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 		return err
 	}
 	if new(big.Float).SetInt(allowance).Cmp(&makerAmount) < 0 {
-		return fmt.Errorf("please approve %s on https://app.1inch.io/#/%d/advanced/limit-order", func() string {
+		return fmt.Errorf("please approve %s on https://1inch.com/pro?mode=limit&pair=%d:%s-%s", func() string {
 			if symbol, err := web3.GetSymbol(makerAsset); err == nil && symbol != "" {
 				return symbol
 			}
 			return makerAsset
-		}(), client.ChainId)
+		}(), client.ChainId, makerAsset, takerAsset)
 	}
 
 	// compute the salt. the highest 96 bits represent salt, and the lowest 160 bit represent extension hash

@@ -29,7 +29,7 @@ At the time of this writing, the software supports the following exchanges:
 * [Binance](https://www.binance.com/en/register?ref=UME24R7B)
 * [Kraken](https://www.kraken.com)
 * [Velora](https://app.velora.xyz/?ref=MHg5RDcxNjU3Mjc2YTI1YzFEM0I4NEUzQ2I1NzBFNThlNUI1MTc0MUYz) (previously ParaSwap)
-* [1inch](https://1inch.io)
+* [1inch](https://1inch.com/)
 
 ## who is paying for gas?
 
@@ -101,8 +101,8 @@ Usage: `./ladder cancel [flags]`
 3. Open [infura.api.key](https://github.com/svanas/ladder/blob/main/api/web3/infura.api.key) and paste your Infura API key
 4. Navigate to [CoinGecko](https://www.coingecko.com/en/developers/dashboard) and generate yourself an API key
 5. Open [coingecko.api.key](https://github.com/svanas/ladder/blob/main/api/coingecko/coingecko.api.key) and paste your CoinGecko API key
-6. Navigate to the [1inch dev portal](https://portal.1inch.dev) and generate yourself an API key
-7. Open [1inch.api.key](https://github.com/svanas/ladder/blob/main/api/oneinch/1inch.api.key) and paste your [1inch](https://1inch.io) API key
+6. Navigate to [1inch business](https://business.1inch.com/) and generate yourself an API key
+7. Open [1inch.api.key](https://github.com/svanas/ladder/blob/main/api/oneinch/1inch.api.key) and paste your [1inch](https://1inch.com/) API key
 8. Open a terminal in the directory you cloned this repo, and execute `go build` on the command-line
 9. Should you decide to fork this repo, then do not commit your API keys. Your API keys are not to be shared.
 

@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	apiURL    = "https://api.1inch.dev"
+	apiURL    = "https://api.1inch.com"
 	apiRouter = "0x111111125421cA6dc452d289314280a0f8842A65"
 )
 
