@@ -1,9 +1,9 @@
 module github.com/svanas/ladder
 
-go 1.23.6
+go 1.23.12
 
 require (
-	github.com/adshao/go-binance/v2 v2.8.2
+	github.com/adshao/go-binance/v2 v2.8.9
 	github.com/ethereum/go-ethereum v1.15.11
 	github.com/jedib0t/go-pretty/v6 v6.6.7
 	github.com/spf13/cobra v1.9.1
