@@ -53,7 +53,6 @@ func init() {
 	exchanges = append(exchanges, newCoinbase())
 	exchanges = append(exchanges, newBitstamp())
 	exchanges = append(exchanges, newBinance())
-	exchanges = append(exchanges, newParaSwap())
 	exchanges = append(exchanges, newOneInch())
 	exchanges = append(exchanges, newKraken())
 }

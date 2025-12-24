@@ -28,7 +28,7 @@ func (self *ParaSwap) Cancel(market string, side consts.OrderSide) error {
 	if len(orders) == 0 {
 		return nil
 	}
-	return errors.New("please cancel your orders on https://app.velora.xyz/#/limit")
+	return errors.New("please cancel your orders on https://app.paraswap.io/#/limit")
 }
 
 func (self *ParaSwap) FormatSymbol(asset string) (string, error) {
@@ -201,7 +201,7 @@ func newParaSwap() Exchange {
 		dex: &dex{
 			info: &info{
 				code: "PSP",
-				name: "Velora",
+				name: "ParaSwap",
 			},
 			coingecko: coingecko.New(),
 		},
