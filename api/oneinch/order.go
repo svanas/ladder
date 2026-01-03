@@ -1,18 +1,16 @@
 package oneinch
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
-	"math/big"
-	"time"
-
 	"github.com/ethereum/go-ethereum/common/math"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/signer/core/apitypes"
 	"github.com/svanas/ladder/api/web3"
 	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/precision"
+	"math/big"
+	"time"
 )
 
 type OrderData struct {
@@ -86,7 +84,6 @@ func (client *Client) GetOrders() ([]Order, error) {
 }
 
 func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, takerAmount big.Float, nonce big.Int, days int) error {
-	const taker = "0x0000000000000000000000000000000000000000"
 	maker, err := client.publicAddress()
 	if err != nil {
 		return err
@@ -97,7 +94,7 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 	if err != nil {
 		return err
 	}
-	allowance, err := web3.GetAllowance(makerAsset, maker, apiRouter)
+	allowance, err := web3.GetAllowance(makerAsset, maker.Hex(), apiRouter)
 	if err != nil {
 		return err
 	}
@@ -110,19 +107,20 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 		}(), client.ChainId, makerAsset, takerAsset)
 	}
 
+	// get calculated making amount on trading pair by provided amount
+	resolverFee, err := client.getFeeInfo(makerAsset, takerAsset, makerAmount, takerAmount)
+	if err != nil {
+		return err
+	}
+
+	// build the order extension and encode it
+	extension, err := newExtension(maker, *getIntegratorFee(), *resolverFee).encode()
+	if err != nil {
+		return err
+	}
+
 	// compute the salt. the highest 96 bits represent salt, and the lowest 160 bit represent extension hash
-	salt, err := func() (*big.Int, error) {
-		// define the maximum value (2^96 - 1)
-		max := new(big.Int).Sub(new(big.Int).Lsh(big.NewInt(1), 96), big.NewInt(1))
-		// generate a random big.Int within the range [0, 2^96 - 1]
-		salt, err := rand.Int(rand.Reader, max)
-		if err != nil {
-			return nil, err
-		}
-		// shift the big.Int left by 160 bits to set the lowest 160 bits to zero
-		salt.Lsh(salt, 160)
-		return salt, nil
-	}()
+	salt, err := generateSalt(extension, false)
 	if err != nil {
 		return err
 	}
@@ -135,15 +133,15 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 	}()
 
 	orderData := OrderData{
-		Salt:         salt.String(),
-		Maker:        maker,
-		Receiver:     taker,
+		Salt:         fmt.Sprintf("%d", salt),
+		Maker:        maker.Hex(),
+		Receiver:     resolverFee.ExtensionAddress,
 		MakerAsset:   makerAsset,
 		TakerAsset:   takerAsset,
 		MakingAmount: precision.F2S(makerAmount, 0),
 		TakingAmount: precision.F2S(takerAmount, 0),
 		MakerTraits:  newMakerTraits(nonce, time.Now().Add(expiry).Unix()).encode(),
-		Extension:    "0x",
+		Extension:    extension,
 	}
 
 	// construct the ERC-712 message
@@ -223,7 +221,7 @@ func (client *Client) PlaceOrder(makerAsset, takerAsset string, makerAmount, tak
 	}
 
 	// post the limit order
-	if _, err := client.post(fmt.Sprintf("/orderbook/v4.0/%d", client.ChainId), body); err != nil {
+	if _, err := client.post(fmt.Sprintf("/orderbook/v4.1/%d", client.ChainId), body); err != nil {
 		return err
 	}
 

@@ -101,23 +101,23 @@ func (client *Client) ecdsaPrivateKey() (*ecdsa.PrivateKey, error) {
 	return crypto.ToECDSA(client.privateKey)
 }
 
-func (client *Client) publicAddress() (string, error) {
+func (client *Client) publicAddress() (common.Address, error) {
 	if client.privateKey == nil {
-		return "", fmt.Errorf("--%s cannot be empty", consts.FLAG_PRIVATE_KEY)
+		return [20]byte{}, fmt.Errorf("--%s cannot be empty", consts.FLAG_PRIVATE_KEY)
 	}
 	ecdsaPrivateKey, err := crypto.ToECDSA(client.privateKey)
 	if err != nil {
-		return "", err
+		return [20]byte{}, err
 	}
-	return crypto.PubkeyToAddress(ecdsaPrivateKey.PublicKey).Hex(), nil
+	return crypto.PubkeyToAddress(ecdsaPrivateKey.PublicKey), nil
 }
 
 func (client *Client) GetEpoch() (*big.Int, error) {
-	public, err := client.publicAddress()
+	maker, err := client.publicAddress()
 	if err != nil {
 		return big.NewInt(0), err
 	}
-	return getEpoch(client.ChainId, common.HexToAddress(public))
+	return getEpoch(client.ChainId, maker)
 }
 
 func ReadOnly() (*Client, error) {

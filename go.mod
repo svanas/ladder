@@ -1,6 +1,8 @@
 module github.com/svanas/ladder
 
-go 1.24.11
+go 1.24.0
+
+toolchain go1.24.11
 
 require (
 	github.com/adshao/go-binance/v2 v2.8.9

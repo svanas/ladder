@@ -35,20 +35,18 @@ type MakerTraits struct {
 
 func newMakerTraits(epoch big.Int, expiry int64) *MakerTraits {
 	return &MakerTraits{
-		AllowedSender: "0x0000000000000000000000000000000000000000",
-		Expiry:        expiry,
-		Nonce:         epoch.Int64(),
-		Series:        0,
-
-		NeedPostinteraction: false,
+		AllowedSender:       "0x0000000000000000000000000000000000000000",
+		Expiry:              expiry,
+		Nonce:               epoch.Int64(),
+		Series:              0,
+		NeedPostinteraction: true,
 		NeedPreinteraction:  false,
 		NeedEpochCheck:      true,
-		HasExtension:        false,
+		HasExtension:        true,
 		ShouldUsePermit2:    false,
 		ShouldUnwrapWeth:    false,
-
-		AllowPartialFills:  true,
-		AllowMultipleFills: true,
+		AllowPartialFills:   true,
+		AllowMultipleFills:  true,
 	}
 }
 
