@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	_ "embed"
-	"errors"
 	"fmt"
 	"math/big"
 
@@ -17,9 +16,6 @@ import (
 type Client struct {
 	client *geth.Client
 }
-
-//go:embed infura.api.key
-var apiKey string
 
 //go:embed erc20.abi.json
 var erc20 []byte
@@ -37,27 +33,22 @@ const (
 var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Base, Arbitrum, Avalanche}
 
 func Endpoint(chainId int64) (string, error) {
-	if apiKey == "" {
-		return "", errors.New("please generate yourself an API key on infura.io then paste your API key in infura.api.key and recompile")
-	}
-
 	switch chainId {
 	case Ethereum:
-		return fmt.Sprintf("https://mainnet.infura.io/v3/%s", apiKey), nil
+		return "https://1rpc.io/eth", nil
 	case Optimism:
-		return fmt.Sprintf("https://optimism-mainnet.infura.io/v3/%s", apiKey), nil
+		return "https://1rpc.io/op", nil
 	case BinanceSmartChain:
-		return "https://bsc-dataseed.binance.org", nil
+		return "https://1rpc.io/bnb", nil
 	case Polygon:
-		return fmt.Sprintf("https://polygon-mainnet.infura.io/v3/%s", apiKey), nil
+		return "https://1rpc.io/matic", nil
 	case Base:
-		return "https://mainnet.base.org", nil
+		return "https://1rpc.io/base", nil
 	case Arbitrum:
-		return fmt.Sprintf("https://arbitrum-mainnet.infura.io/v3/%s", apiKey), nil
+		return "https://1rpc.io/arb", nil
 	case Avalanche:
-		return fmt.Sprintf("https://avalanche-mainnet.infura.io/v3/%s", apiKey), nil
+		return "https://1rpc.io/avax/c", nil
 	}
-
 	return "", fmt.Errorf("chain %d is not supported at this time", chainId)
 }
 
