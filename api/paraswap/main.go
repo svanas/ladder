@@ -20,8 +20,6 @@ func router(chainId int64) (string, error) {
 		return "0x8dcdfe88ef0351f27437284d0710cd65b20288bb", nil
 	case web3.Polygon:
 		return "0xF3CD476C3C4D3Ac5cA2724767f269070CA09A043", nil
-	case web3.Fantom:
-		return "0x2df17455b96dde3618fd6b1c3a9aa06d6ab89347", nil
 	case web3.Base:
 		return "0xa003dFBA51C9e1e56C67ae445b852bdEd7aC5EEd", nil
 	case web3.Arbitrum:

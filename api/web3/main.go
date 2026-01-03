@@ -29,13 +29,12 @@ const (
 	Optimism          int64 = 10
 	BinanceSmartChain int64 = 56
 	Polygon           int64 = 137
-	Fantom            int64 = 250
 	Base              int64 = 8453
 	Arbitrum          int64 = 42161
 	Avalanche         int64 = 43114
 )
 
-var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Fantom, Base, Arbitrum, Avalanche}
+var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Base, Arbitrum, Avalanche}
 
 func Endpoint(chainId int64) (string, error) {
 	if apiKey == "" {
@@ -51,8 +50,6 @@ func Endpoint(chainId int64) (string, error) {
 		return "https://bsc-dataseed.binance.org", nil
 	case Polygon:
 		return fmt.Sprintf("https://polygon-mainnet.infura.io/v3/%s", apiKey), nil
-	case Fantom:
-		return "https://rpc.fantom.network", nil
 	case Base:
 		return "https://mainnet.base.org", nil
 	case Arbitrum:

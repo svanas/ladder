@@ -29,8 +29,6 @@ func chainName(chainId int64) (string, error) {
 		return "binance-smart-chain", nil
 	case web3.Polygon:
 		return "polygon-pos", nil
-	case web3.Fantom:
-		return "fantom", nil
 	case web3.Base:
 		return "base", nil
 	case web3.Arbitrum:
