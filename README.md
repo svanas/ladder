@@ -54,17 +54,17 @@ Usage: `./ladder sell [flags]`
 
 | flag                | description                                                                           | default |
 |---------------------|---------------------------------------------------------------------------------------|---------|
-| `--exchange`        | name or code of the exchange                                                          |         |
-| `--asset`           | name of the asset you will want to sell                                               | BTC     |
-| `--quote`           | name of the asset you will want to receive                                            | USDT    |
-| `--start-at-price`  | price where you will want to start selling at                                         |         |
-| `--stop-at-price`   | price where you will want to stop selling                                             |         |
-| `--start-with-size` | size of your first sell order (in base asset)                                         |         |
-| `--mult`            | multiplier that defines the number of orders and the distance between them            | 1.05    |
-| `--size`            | the quantity you will want to sell (in base asset)                                    |         |
-| `--sweep-dust`      | sell the exact amount you specified, otherwise allow for leftover dust in your wallet | `false` |
-| `--cancel`          | cancel existing limit orders, if any                                                  | `true`  |
-| `--days`            | number of days your order will be valid (optional, DEX-only)                          |         |
+| `‑‑exchange`        | name or code of the exchange                                                          |         |
+| `‑‑asset`           | name of the asset you will want to sell                                               | BTC     |
+| `‑‑quote`           | name of the asset you will want to receive                                            | USDT    |
+| `‑‑start‑at‑price`  | price where you will want to start selling at                                         |         |
+| `‑‑stop‑at‑price`   | price where you will want to stop selling                                             |         |
+| `‑‑start‑with‑size` | size of your first sell order (in base asset)                                         |         |
+| `‑‑mult`            | multiplier that defines the number of orders and the distance between them            | 1.05    |
+| `‑‑size`            | the quantity you will want to sell (in base asset)                                    |         |
+| `‑‑sweep‑dust`      | sell the exact amount you specified, otherwise allow for leftover dust in your wallet | `false` |
+| `‑‑cancel`          | cancel existing limit orders, if any                                                  | `true`  |
+| `‑‑days`            | number of days your order will be valid (optional, DEX-only)                          |         |
 
 ## buy
 
@@ -72,17 +72,17 @@ Usage: `./ladder buy [flags]`
 
 | flag                | description                                                                          | default |
 |---------------------|--------------------------------------------------------------------------------------|---------|
-| `--exchange`        | name or code of the exchange                                                         |         |
-| `--asset`           | name of the asset you will want to buy                                               | BTC     |
-| `--quote`           | name of the asset you will want to spend                                             | USDT    |
-| `--start-at-price`  | price where you will want to start buying at                                         |         |
-| `--stop-at-price`   | price where you will want to stop buying                                             |         |
-| `--start-with-size` | size of your first buy order (in quote asset)                                        |         |
-| `--mult`            | multiplier that defines the number of orders and the distance between them           | 1.05    |
-| `--size`            | the quantity you will want to buy (in quote asset)                                   |         |
-| `--sweep-dust`      | buy the exact amount you specified, otherwise allow for leftover dust in your wallet | `false` |
-| `--cancel`          | cancel existing limit orders, if any                                                 | `true`  |
-| `--days`            | number of days your order will be valid (optional, DEX-only)                         |         |
+| `‑‑exchange`        | name or code of the exchange                                                         |         |
+| `‑‑asset`           | name of the asset you will want to buy                                               | BTC     |
+| `‑‑quote`           | name of the asset you will want to spend                                             | USDT    |
+| `‑‑start‑at‑price`  | price where you will want to start buying at                                         |         |
+| `‑‑stop‑at‑price`   | price where you will want to stop buying                                             |         |
+| `‑‑start‑with‑size` | size of your first buy order (in quote asset)                                        |         |
+| `‑‑mult`            | multiplier that defines the number of orders and the distance between them           | 1.05    |
+| `‑‑size`            | the quantity you will want to buy (in quote asset)                                   |         |
+| `‑‑sweep‑dust`      | buy the exact amount you specified, otherwise allow for leftover dust in your wallet | `false` |
+| `‑‑cancel`          | cancel existing limit orders, if any                                                 | `true`  |
+| `‑‑days`            | number of days your order will be valid (optional, DEX-only)                         |         |
 
 ## cancel
 
@@ -90,10 +90,10 @@ Usage: `./ladder cancel [flags]`
 
 | flag         | description                  |
 |--------------|------------------------------|
-| `--exchange` | name or code of the exchange |
-| `--asset`    | base asset                   |
-| `--quote`    | quote asset                  |
-| `--side`     | `buy` or `sell`              |
+| `‑‑exchange` | name or code of the exchange |
+| `‑‑asset`    | base asset                   |
+| `‑‑quote`    | quote asset                  |
+| `‑‑side`     | `buy` or `sell`              |
 
 ## compiling
 
