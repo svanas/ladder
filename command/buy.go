@@ -19,6 +19,7 @@ func init() {
 
 	buyCommand.Flags().Float64(consts.FLAG_MULT, 1.05, "multiplier that defines the number of orders and the distance between them")
 	buyCommand.Flags().Float64(consts.FLAG_SIZE, 0, "the quantity you will want to buy (in quote asset)")
+	buyCommand.Flags().Bool(consts.FLAG_SWEEP_DUST, false, "buy the exact amount you specified, otherwise allow for leftover dust in your wallet")
 
 	buyCommand.Flags().String(consts.FLAG_EXCHANGE, "", "name or code of the exchange")
 	buyCommand.Flags().Bool(consts.FLAG_DRY_RUN, true, "display the output of the command without actually running it")
@@ -67,6 +68,11 @@ var buyCommand = cobra.Command{
 		}
 
 		size, err := flag.GetFloat64(*cmd, consts.FLAG_SIZE)
+		if err != nil {
+			return err
+		}
+
+		sweep_dust, err := cmd.Flags().GetBool(consts.FLAG_SWEEP_DUST)
 		if err != nil {
 			return err
 		}
@@ -134,7 +140,12 @@ var buyCommand = cobra.Command{
 			if err != nil {
 				return err
 			}
-			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, 0, steps, *prec)
+			orders := internal.Orders(start_at_price, stop_at_price, (start_with_size / start_at_price), mult, func() float64 {
+				if sweep_dust {
+					return size
+				}
+				return 0
+			}(), steps, *prec)
 			for _, order := range orders {
 				if (order.Price < ticker) || (ticker == -1) {
 					yes := all
@@ -156,7 +167,12 @@ var buyCommand = cobra.Command{
 			}
 		}
 
-		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, 0, steps, *prec)
+		internal.Print(asset, quote, start_at_price, stop_at_price, (start_with_size / start_at_price), mult, func() float64 {
+			if sweep_dust {
+				return size
+			}
+			return 0
+		}(), steps, *prec)
 
 		return nil
 	},

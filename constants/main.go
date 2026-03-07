@@ -12,6 +12,7 @@ const (
 	START_WITH_SIZE  = "start-with-size"
 	FLAG_MULT        = "mult"
 	FLAG_SIZE        = "size"
+	FLAG_SWEEP_DUST  = "sweep-dust"
 	FLAG_EXCHANGE    = "exchange"
 	FLAG_DRY_RUN     = "dry-run"
 	FLAG_SIDE        = "side"
