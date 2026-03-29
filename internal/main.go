@@ -4,9 +4,15 @@ import (
 	"fmt"
 
 	"github.com/jedib0t/go-pretty/v6/table"
+	consts "github.com/svanas/ladder/constants"
 	"github.com/svanas/ladder/exchange"
 	"github.com/svanas/ladder/precision"
 )
+
+type Target struct {
+	Side     consts.OrderSide
+	Notional float64 // size if Side == SELL, otherwise size * price
+}
 
 // given a number of input `steps`, this function will calculate how much of the BASE asset we will sell
 func SimulateSell(start_with_size, mult float64, steps int) float64 {
@@ -37,8 +43,11 @@ func SimulateBuy(start_at_price, stop_at_price, start_with_size, mult float64, s
 }
 
 // compute every order
-func Orders(start_at_price, stop_at_price, start_with_size, mult, size float64, steps int, prec exchange.Precision) (result []exchange.Order) {
-	var cumulative_size float64 = 0
+func Orders(start_at_price, stop_at_price, start_with_size, mult float64, target *Target, steps int, prec exchange.Precision) (result []exchange.Order) {
+	var (
+		cumulative_size  float64 = 0
+		cumulative_value float64 = 0
+	)
 
 	// this is the very 1st order we will always make
 	current_price := start_at_price
@@ -49,10 +58,16 @@ func Orders(start_at_price, stop_at_price, start_with_size, mult, size float64, 
 
 	for step := 0; step < steps; step++ {
 		// sweeping the dust from your wallet
-		if (size > 0) && (step == (steps - 1)) {
-			current_size = size - cumulative_size
+		if (target != nil) && (target.Notional > 0) && (step == (steps - 1)) {
+			if target.Side == consts.SELL {
+				current_size = target.Notional - cumulative_size
+			} else {
+				current_size = (target.Notional - cumulative_value) / current_price
+			}
 		}
+
 		cumulative_size += current_size
+		cumulative_value += current_price * current_size
 
 		result = append(result, exchange.Order{
 			Price: precision.Round(current_price, prec.Price),
@@ -67,7 +82,7 @@ func Orders(start_at_price, stop_at_price, start_with_size, mult, size float64, 
 }
 
 // print every order to standard output
-func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, mult, size float64, steps int, prec exchange.Precision) {
+func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, mult float64, target *Target, steps int, prec exchange.Precision) {
 	tbl := table.NewWriter()
 	tbl.AppendHeader(table.Row{"", "Price", "Size", "Value"})
 
@@ -85,8 +100,12 @@ func Print(asset, quote string, start_at_price, stop_at_price, start_with_size, 
 
 	for step := 0; step < steps; step++ {
 		// sweeping the dust from your wallet
-		if (size > 0) && (step == (steps - 1)) {
-			current_size = size - cumulative_size
+		if (target != nil) && (target.Notional > 0) && (step == (steps - 1)) {
+			if target.Side == consts.SELL {
+				current_size = target.Notional - cumulative_size
+			} else {
+				current_size = (target.Notional - cumulative_value) / current_price
+			}
 		}
 
 		cumulative_size += current_size

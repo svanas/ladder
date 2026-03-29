@@ -2,7 +2,7 @@ module github.com/svanas/ladder
 
 go 1.24.0
 
-toolchain go1.24.11
+toolchain go1.24.13
 
 require (
 	github.com/adshao/go-binance/v2 v2.8.10
@@ -10,7 +10,7 @@ require (
 	github.com/jedib0t/go-pretty/v6 v6.7.8
 	github.com/spf13/cobra v1.10.2
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
-	golang.org/x/term v0.40.0
+	golang.org/x/term v0.37.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
@@ -48,6 +48,6 @@ require (
 	go.opentelemetry.io/otel/trace v1.39.0 // indirect
 	golang.org/x/crypto v0.44.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.41.0 // indirect
+	golang.org/x/sys v0.39.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 )
