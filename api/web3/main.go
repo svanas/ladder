@@ -26,6 +26,7 @@ const (
 	BnbChain    int64 = 56
 	GnosisChain int64 = 100
 	Polygon     int64 = 137
+	Sonic       int64 = 146
 	Base        int64 = 8453
 	Arbitrum    int64 = 42161
 	Avalanche   int64 = 43114
@@ -43,6 +44,8 @@ func Endpoint(chainId int64) (string, error) {
 		return "https://1rpc.io/gnosis", nil
 	case Polygon:
 		return "https://1rpc.io/matic", nil
+	case Sonic:
+		return "https://1rpc.io/sonic", nil
 	case Base:
 		return "https://1rpc.io/base", nil
 	case Arbitrum:

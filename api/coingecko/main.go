@@ -31,6 +31,8 @@ func chainName(chainId int64) (string, error) {
 		return "xdai", nil
 	case web3.Polygon:
 		return "polygon-pos", nil
+	case web3.Sonic:
+		return "sonic", nil
 	case web3.Base:
 		return "base", nil
 	case web3.Arbitrum:
