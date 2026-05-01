@@ -21,16 +21,15 @@ type Client struct {
 var erc20 []byte
 
 const (
-	Ethereum          int64 = 1
-	Optimism          int64 = 10
-	BinanceSmartChain int64 = 56
-	Polygon           int64 = 137
-	Base              int64 = 8453
-	Arbitrum          int64 = 42161
-	Avalanche         int64 = 43114
+	Ethereum    int64 = 1
+	Optimism    int64 = 10
+	BnbChain    int64 = 56
+	GnosisChain int64 = 100
+	Polygon     int64 = 137
+	Base        int64 = 8453
+	Arbitrum    int64 = 42161
+	Avalanche   int64 = 43114
 )
-
-var Chains = [8]int64{Ethereum, Optimism, BinanceSmartChain, Polygon, Base, Arbitrum, Avalanche}
 
 func Endpoint(chainId int64) (string, error) {
 	switch chainId {
@@ -38,8 +37,10 @@ func Endpoint(chainId int64) (string, error) {
 		return "https://1rpc.io/eth", nil
 	case Optimism:
 		return "https://1rpc.io/op", nil
-	case BinanceSmartChain:
+	case BnbChain:
 		return "https://1rpc.io/bnb", nil
+	case GnosisChain:
+		return "https://1rpc.io/gnosis", nil
 	case Polygon:
 		return "https://1rpc.io/matic", nil
 	case Base:
