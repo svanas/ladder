@@ -24,10 +24,10 @@ In essence, you are executing a better dollar-cost-averaging (DCA) trading strat
 ## exchanges
 
 At the time of this writing, the software supports the following exchanges:
-* [Coinbase](https://advanced.coinbase.com/join/LZSCYZY)
-* [Bitstamp](https://www.bitstamp.net/ref/QWE1MDzZoyPWZNyU/)
-* [Binance](https://www.binance.com/en/register?ref=UME24R7B)
-* [Kraken](https://www.kraken.com)
+* [Coinbase](https://www.coinbase.com/)
+* [Bitstamp](https://www.bitstamp.net/)
+* [Binance](https://www.binance.com/)
+* [Kraken](https://www.kraken.com/)
 * [1inch](https://1inch.com/)
 
 ## who is paying for gas?

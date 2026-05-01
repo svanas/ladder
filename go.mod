@@ -5,12 +5,12 @@ go 1.24.0
 toolchain go1.24.13
 
 require (
-	github.com/adshao/go-binance/v2 v2.8.10
-	github.com/ethereum/go-ethereum v1.17.1
-	github.com/jedib0t/go-pretty/v6 v6.7.8
+	github.com/adshao/go-binance/v2 v2.8.11
+	github.com/ethereum/go-ethereum v1.17.2
+	github.com/jedib0t/go-pretty/v6 v6.7.10
 	github.com/spf13/cobra v1.10.2
 	github.com/svanas/kraken-go-api-client v0.0.0-20240227104557-9a268715093e
-	golang.org/x/term v0.37.0
+	golang.org/x/term v0.40.0
 	gopkg.in/square/go-jose.v2 v2.6.0
 )
 
@@ -22,7 +22,7 @@ require (
 	github.com/bits-and-blooms/bitset v1.20.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/consensys/gnark-crypto v0.18.1 // indirect
-	github.com/crate-crypto/go-eth-kzg v1.4.0 // indirect
+	github.com/crate-crypto/go-eth-kzg v1.5.0 // indirect
 	github.com/deckarep/golang-set/v2 v2.6.0 // indirect
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.0.1 // indirect
 	github.com/ethereum/c-kzg-4844/v2 v2.1.6 // indirect
@@ -43,11 +43,11 @@ require (
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
 	github.com/tklauser/numcpus v0.6.1 // indirect
 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
-	go.opentelemetry.io/otel v1.39.0 // indirect
-	go.opentelemetry.io/otel/metric v1.39.0 // indirect
-	go.opentelemetry.io/otel/trace v1.39.0 // indirect
+	go.opentelemetry.io/otel v1.40.0 // indirect
+	go.opentelemetry.io/otel/metric v1.40.0 // indirect
+	go.opentelemetry.io/otel/trace v1.40.0 // indirect
 	golang.org/x/crypto v0.44.0 // indirect
 	golang.org/x/sync v0.18.0 // indirect
-	golang.org/x/sys v0.39.0 // indirect
+	golang.org/x/sys v0.41.0 // indirect
 	golang.org/x/text v0.31.0 // indirect
 )
